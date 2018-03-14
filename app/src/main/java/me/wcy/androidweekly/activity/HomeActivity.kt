@@ -11,6 +11,8 @@ import me.wcy.androidweekly.R
 import me.wcy.androidweekly.fragment.CollectionFragment
 import me.wcy.androidweekly.fragment.WeeklyFragment
 import me.wcy.androidweekly.utils.binding.Bind
+import me.wcy.androidweekly.widget.FragmentAdapter
+import me.wcy.androidweekly.widget.ScrollableViewPager
 
 class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
     @Bind(R.id.drawer_layout)
@@ -19,9 +21,8 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private val navigationView: NavigationView? = null
     @Bind(R.id.toolbar)
     private val toolbar: Toolbar? = null
-
-    private var weeklyFragment: WeeklyFragment? = null
-    private var collectionFragment: CollectionFragment? = null
+    @Bind(R.id.view_pager)
+    private val viewPager: ScrollableViewPager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,9 +31,8 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_menu)
-        weeklyFragment = WeeklyFragment()
-        replaceFragment(weeklyFragment!!)
         navigationView!!.setNavigationItemSelectedListener(this)
+        setupViewPager()
     }
 
     override fun shouldAddToolbar(): Boolean {
@@ -47,34 +47,33 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        drawerLayout!!.closeDrawers()
-        var fragment: Fragment? = null
-        when (item.itemId) {
-            R.id.action_weekly -> {
-                if (weeklyFragment == null) {
-                    weeklyFragment = WeeklyFragment()
-                }
-                fragment = weeklyFragment as WeeklyFragment
-            }
-            R.id.action_collection -> {
-                if (collectionFragment == null) {
-                    collectionFragment = CollectionFragment()
-                }
-                fragment = collectionFragment as CollectionFragment
-            }
-        }
-        if (fragment != null) {
-            replaceFragment(fragment)
-            return true
-        }
-        return false
+    private fun setupViewPager() {
+        val fragmentList = mutableListOf<Fragment>()
+        fragmentList.add(WeeklyFragment())
+        fragmentList.add(CollectionFragment())
+        val fragmentAdapter = FragmentAdapter(supportFragmentManager, fragmentList)
+        viewPager!!.setScrollable(false)
+        viewPager.offscreenPageLimit = fragmentList.size
+        viewPager.adapter = fragmentAdapter
+        viewPager.setCurrentItem(0, false)
     }
 
-    private fun replaceFragment(fragment: Fragment) {
-        supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.fl_container, fragment)
-                .commit()
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        drawerLayout!!.closeDrawers()
+        when (item.itemId) {
+            R.id.action_weekly -> {
+                if (viewPager!!.currentItem != 0) {
+                    viewPager.setCurrentItem(0, false)
+                }
+                return true
+            }
+            R.id.action_collection -> {
+                if (viewPager!!.currentItem != 1) {
+                    viewPager.setCurrentItem(1, false)
+                }
+                return true
+            }
+        }
+        return false
     }
 }

@@ -1,5 +1,6 @@
 package me.wcy.androidweekly.activity
 
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.AppBarLayout
@@ -58,5 +59,13 @@ abstract class BaseActivity : AppCompatActivity() {
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    fun isDestroyedCompat(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            super.isDestroyed()
+        } else {
+            supportFragmentManager.isDestroyed
+        }
     }
 }

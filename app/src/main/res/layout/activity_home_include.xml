@@ -6,8 +6,8 @@
 
     <include layout="@layout/include_app_bar" />
 
-    <FrameLayout
-        android:id="@+id/fl_container"
+    <me.wcy.androidweekly.widget.ScrollableViewPager
+        android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </LinearLayout>
