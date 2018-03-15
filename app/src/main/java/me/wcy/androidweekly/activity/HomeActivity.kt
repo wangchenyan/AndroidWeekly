@@ -9,7 +9,7 @@ import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import me.wcy.androidweekly.R
 import me.wcy.androidweekly.fragment.CollectionFragment
-import me.wcy.androidweekly.fragment.WeeklyFragment
+import me.wcy.androidweekly.fragment.WeeklyListFragment
 import me.wcy.androidweekly.utils.binding.Bind
 import me.wcy.androidweekly.widget.FragmentAdapter
 import me.wcy.androidweekly.widget.ScrollableViewPager
@@ -49,7 +49,7 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     private fun setupViewPager() {
         val fragmentList = mutableListOf<Fragment>()
-        fragmentList.add(WeeklyFragment())
+        fragmentList.add(WeeklyListFragment())
         fragmentList.add(CollectionFragment())
         val fragmentAdapter = FragmentAdapter(supportFragmentManager, fragmentList)
         viewPager!!.setScrollable(false)

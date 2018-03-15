@@ -3,8 +3,10 @@ package me.wcy.androidweekly.api
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import me.wcy.androidweekly.converter.WeeklyDetailConverter
 import me.wcy.androidweekly.converter.WeeklyListConverter
 import me.wcy.androidweekly.model.Weekly
+import me.wcy.androidweekly.model.WeeklyDetail
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -45,8 +47,18 @@ class Api private constructor() {
         return api.getWeeklyList(page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .map { html ->
-                    return@map WeeklyListConverter().convert(html)
+                .map {
+                    return@map WeeklyListConverter().convert(it)
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    fun getWeeklyDetail(url: String): Single<WeeklyDetail> {
+        return api.getWeeklyDetail(url)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .map {
+                    return@map WeeklyDetailConverter().convert(it)
                 }
                 .observeOn(AndroidSchedulers.mainThread())
     }

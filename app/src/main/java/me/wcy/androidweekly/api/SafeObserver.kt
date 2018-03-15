@@ -38,18 +38,18 @@ abstract class SafeObserver<T> : SingleObserver<T> {
 
     override fun onSuccess(result: T) {
         if (dispatch()) {
-            onResult(result)
+            onResult(result, null)
         }
     }
 
     override fun onError(e: Throwable) {
         Log.e(getTag(), "request error", e)
         if (dispatch()) {
-            onResult(null)
+            onResult(null, e)
         }
     }
 
-    abstract fun onResult(t: T?)
+    abstract fun onResult(t: T?, e: Throwable?)
 
     private fun dispatch(): Boolean {
         if (activityRef != null) {

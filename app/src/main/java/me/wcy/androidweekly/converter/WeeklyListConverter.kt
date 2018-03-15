@@ -28,7 +28,18 @@ class WeeklyListConverter : Converter<List<Weekly>> {
             val image = header.getElementsByClass("featured-image-container")[0]
             var imageUrl = image.attr("style")
             imageUrl = imageUrl.substring(imageUrl.indexOf("(") + 1, imageUrl.indexOf(")"))
-            weekly.img = baseUrl.plus(imageUrl)
+            if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+                imageUrl = "$baseUrl$imageUrl"
+            }
+            weekly.img = imageUrl
+
+            val author = header.getElementsByClass("author")[0]
+            weekly.author_name = author.getElementsByClass("name")[0].text()
+            var authorAvatar = author.getElementsByClass("avatar")[0].attr("src")
+            if (!TextUtils.isEmpty(authorAvatar) && authorAvatar.startsWith("//")) {
+                authorAvatar = "http:$authorAvatar"
+            }
+            weekly.author_avatar = authorAvatar
 
             val content = it.getElementsByClass("content")[0]
             val title = content.getElementsByClass("h4 title")[0].getElementsByTag("a")[0]

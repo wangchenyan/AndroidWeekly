@@ -7,5 +7,5 @@ import java.lang.Exception
  */
 interface Converter<T> {
     @Throws(Exception::class)
-    fun convert(html: String): T?
+    fun convert(html: String): T
 }
