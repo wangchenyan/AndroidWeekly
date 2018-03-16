@@ -53,22 +53,24 @@ class WeeklyDetailActivity : BaseActivity() {
     }
 
     private fun showWeeklyDetail(weeklyDetail: WeeklyDetail) {
-        weeklyDetail.newsList!!.forEach {
+        weeklyDetail.newsList!!.forEach { linkGroup ->
             val group = LayoutInflater.from(this).inflate(R.layout.link_group, linkGroupContainer, false)
             val linkContainer = group.findViewById<LinearLayout>(R.id.link_container)
             val groupTitle = group.findViewById<TextView>(R.id.tv_group_title)
-            groupTitle.text = it.title
-            it.links!!.forEach {
+            groupTitle.text = linkGroup.title
+            var index = 1
+            linkGroup.links!!.forEach { link ->
                 val linkItem = LayoutInflater.from(this).inflate(R.layout.link_item, linkContainer, false)
                 val linkTitle = linkItem.findViewById<TextView>(R.id.tv_title)
                 val linkSummary = linkItem.findViewById<TextView>(R.id.tv_summary)
-                linkTitle.text = it.title
-                linkSummary.text = it.summary
-                linkSummary.visibility = if (TextUtils.isEmpty(it.summary)) GONE else VISIBLE
+                linkTitle.text = index.toString().plus(". ").plus(link.title)
+                linkSummary.text = link.summary
+                linkSummary.visibility = if (TextUtils.isEmpty(link.summary)) GONE else VISIBLE
                 linkItem.setOnClickListener {
-                    // TODO 打开链接
+                    BrowserActivity.start(this, link.title!!, link.url!!)
                 }
                 linkContainer.addView(linkItem)
+                index++
             }
             linkGroupContainer!!.addView(group)
         }
