@@ -9,7 +9,7 @@ data class Weekly(
         var title: String? = null,
         var date: String? = null,
         var comment: String? = null,
-        var tagList: MutableList<String>? = null,
+        var tag_list: String? = null,
         var author_name: String? = null,
         var author_avatar: String? = null
 )

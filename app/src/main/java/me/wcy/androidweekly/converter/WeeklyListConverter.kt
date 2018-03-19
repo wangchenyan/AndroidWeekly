@@ -48,10 +48,14 @@ class WeeklyListConverter : Converter<List<Weekly>> {
             weekly.date = content.getElementsByClass("date")[0].ownText()
             weekly.comment = content.getElementsByClass("Comment")[0].getElementsByTag("a")[0].text()
             val tagElements = content.getElementsByClass("tag-list")[0].getElementsByTag("a")
-            weekly.tagList = mutableListOf()
+            var tag_list = ""
             tagElements.forEach {
-                weekly.tagList!!.add(it.text())
+                tag_list = tag_list.plus(it).plus(",")
             }
+            if (tag_list.isNotEmpty()) {
+                tag_list = tag_list.dropLast(1)
+            }
+            weekly.tag_list = tag_list
 
             list.add(weekly)
         }

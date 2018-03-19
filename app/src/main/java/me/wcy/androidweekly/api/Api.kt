@@ -20,7 +20,7 @@ class Api private constructor() {
     private val api: IApi
 
     companion object {
-        val BASE_URL: String = "https://www.androidweekly.cn/"
+        const val BASE_URL: String = "https://www.androidweekly.cn/"
         fun get() = SingletonHolder.instance
     }
 

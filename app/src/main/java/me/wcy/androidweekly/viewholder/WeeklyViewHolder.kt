@@ -49,10 +49,6 @@ class WeeklyViewHolder(item: View) : RViewHolder<Weekly>(item) {
         tvTitle!!.text = data!!.title
         tvDate!!.text = data!!.date
         tvComment!!.text = data!!.comment
-        var tags = ""
-        data!!.tagList!!.forEach {
-            tags = tags.plus(it)
-        }
-        tvTags!!.text = tags
+        tvTags!!.text = data!!.tag_list
     }
 }
