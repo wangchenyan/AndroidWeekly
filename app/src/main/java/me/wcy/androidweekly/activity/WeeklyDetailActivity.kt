@@ -3,9 +3,12 @@ package me.wcy.androidweekly.activity
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.LinearLayout
@@ -14,18 +17,24 @@ import me.wcy.androidweekly.R
 import me.wcy.androidweekly.api.Api
 import me.wcy.androidweekly.api.SafeObserver
 import me.wcy.androidweekly.constants.Extras
+import me.wcy.androidweekly.model.Weekly
 import me.wcy.androidweekly.model.WeeklyDetail
+import me.wcy.androidweekly.storage.db.DBManager
+import me.wcy.androidweekly.storage.db.WeeklyEntity
+import me.wcy.androidweekly.storage.db.greendao.WeeklyEntityDao
+import me.wcy.androidweekly.utils.ToastUtils
 import me.wcy.androidweekly.utils.binding.Bind
 
 class WeeklyDetailActivity : BaseActivity() {
     @Bind(R.id.link_group_container)
     private val linkGroupContainer: LinearLayout? = null
 
+    private var weekly: Weekly? = null
+
     companion object {
-        fun start(context: Context, title: String, url: String) {
+        fun start(context: Context, weekly: Weekly) {
             val intent = Intent(context, WeeklyDetailActivity::class.java)
-            intent.putExtra(Extras.TITLE, title)
-            intent.putExtra(Extras.URL, url)
+            intent.putExtra(Extras.WEEKLY, weekly)
             context.startActivity(intent)
         }
     }
@@ -34,11 +43,49 @@ class WeeklyDetailActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_weekly_detail)
 
-        val title = intent.getStringExtra(Extras.TITLE)
-        val url = intent.getStringExtra(Extras.URL)
+        weekly = intent.getSerializableExtra(Extras.WEEKLY) as Weekly?
 
-        setTitle(title)
-        getWeeklyDetail(url)
+        title = weekly!!.title
+        getWeeklyDetail(weekly!!.url!!)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_collect, menu)
+        val collectItem = menu!!.getItem(0)
+        val collection = DBManager.get().getWeeklyEntityDao()!!.queryBuilder().where(WeeklyEntityDao.Properties.Url.eq(weekly!!.url)).unique()
+        collectItem.title = if (collection == null) "收藏" else "已收藏"
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item!!.itemId) {
+            R.id.action_collect -> {
+                if (item.title == "收藏") {
+                    DBManager.get().getWeeklyEntityDao()!!.insert(WeeklyEntity.fromWeekly(weekly))
+                    item.title = "已收藏"
+                    ToastUtils.show("已收藏")
+                } else {
+                    val entity = DBManager.get().getWeeklyEntityDao()!!.queryBuilder().where(WeeklyEntityDao.Properties.Url.eq(weekly!!.url)).build().unique()
+                    if (entity != null) {
+                        DBManager.get().getWeeklyEntityDao()!!.delete(entity)
+                    }
+                    item.title = "收藏"
+                    ToastUtils.show("已取消收藏")
+                }
+                return true
+            }
+            R.id.action_open_in_browser -> {
+                try {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(weekly!!.url))
+                    startActivity(intent)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    ToastUtils.show("打开失败")
+                }
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun getWeeklyDetail(url: String) {

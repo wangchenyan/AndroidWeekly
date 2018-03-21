@@ -33,7 +33,7 @@ class WeeklyViewHolder(item: View) : RViewHolder<Weekly>(item) {
 
     init {
         item.setOnClickListener {
-            WeeklyDetailActivity.start(context, data!!.title!!, data!!.url!!)
+            WeeklyDetailActivity.start(context, data!!)
         }
     }
 
@@ -49,6 +49,6 @@ class WeeklyViewHolder(item: View) : RViewHolder<Weekly>(item) {
         tvTitle!!.text = data!!.title
         tvDate!!.text = data!!.date
         tvComment!!.text = data!!.comment
-        tvTags!!.text = data!!.tag_list
+        tvTags!!.text = data!!.tags
     }
 }

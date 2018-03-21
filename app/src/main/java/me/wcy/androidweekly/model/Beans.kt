@@ -1,5 +1,7 @@
 package me.wcy.androidweekly.model
 
+import java.io.Serializable
+
 /**
  * Created by hzwangchenyan on 2018/3/14.
  */
@@ -9,22 +11,22 @@ data class Weekly(
         var title: String? = null,
         var date: String? = null,
         var comment: String? = null,
-        var tag_list: String? = null,
+        var tags: String? = null,
         var author_name: String? = null,
         var author_avatar: String? = null
-)
+) : Serializable
 
 data class Link(
         var title: String? = null,
         var summary: String? = null,
         var url: String? = null
-)
+) : Serializable
 
 data class LinkGroup(
         var title: String? = null,
         var links: MutableList<Link>? = null
-)
+) : Serializable
 
 data class WeeklyDetail(
         var newsList: MutableList<LinkGroup>? = null
-)
+) : Serializable

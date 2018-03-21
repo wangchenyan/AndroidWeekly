@@ -7,5 +7,6 @@ class Extras {
     companion object {
         const val TITLE = "title"
         const val URL = "url"
+        const val WEEKLY = "weekly"
     }
 }

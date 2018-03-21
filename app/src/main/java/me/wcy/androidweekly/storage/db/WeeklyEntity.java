@@ -1,11 +1,13 @@
 package me.wcy.androidweekly.storage.db;
 
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.NotNull;
 import org.greenrobot.greendao.annotation.Property;
 import org.greenrobot.greendao.annotation.Unique;
-import org.greenrobot.greendao.annotation.Generated;
+
+import me.wcy.androidweekly.model.Weekly;
 
 /**
  * Created by hzwangchenyan on 2018/3/19.
@@ -34,8 +36,8 @@ public class WeeklyEntity {
     @Property(nameInDb = "comment")
     private String comment;
 
-    @Property(nameInDb = "tag_list")
-    private String tag_list;
+    @Property(nameInDb = "tags")
+    private String tags;
 
     @Property(nameInDb = "author_name")
     private String author_name;
@@ -43,17 +45,33 @@ public class WeeklyEntity {
     @Property(nameInDb = "author_avatar")
     private String author_avatar;
 
-    @Generated(hash = 402346306)
+    public static WeeklyEntity fromWeekly(Weekly weekly) {
+        if (weekly == null) {
+            return null;
+        }
+        WeeklyEntity entity = new WeeklyEntity();
+        entity.setUrl(weekly.getUrl());
+        entity.setImg(weekly.getImg());
+        entity.setTitle(weekly.getTitle());
+        entity.setDate(weekly.getDate());
+        entity.setComment(weekly.getComment());
+        entity.setTags(weekly.getTags());
+        entity.setAuthor_name(weekly.getAuthor_name());
+        entity.setAuthor_avatar(weekly.getAuthor_avatar());
+        return entity;
+    }
+
+    @Generated(hash = 2004141060)
     public WeeklyEntity(Long id, @NotNull String url, String img,
-            @NotNull String title, String date, String comment, String tag_list,
-            String author_name, String author_avatar) {
+                        @NotNull String title, String date, String comment, String tags,
+                        String author_name, String author_avatar) {
         this.id = id;
         this.url = url;
         this.img = img;
         this.title = title;
         this.date = date;
         this.comment = comment;
-        this.tag_list = tag_list;
+        this.tags = tags;
         this.author_name = author_name;
         this.author_avatar = author_avatar;
     }
@@ -110,12 +128,12 @@ public class WeeklyEntity {
         this.comment = comment;
     }
 
-    public String getTag_list() {
-        return this.tag_list;
+    public String getTags() {
+        return this.tags;
     }
 
-    public void setTag_list(String tag_list) {
-        this.tag_list = tag_list;
+    public void setTags(String tags) {
+        this.tags = tags;
     }
 
     public String getAuthor_name() {
