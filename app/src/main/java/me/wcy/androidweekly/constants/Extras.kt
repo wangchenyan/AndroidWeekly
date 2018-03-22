@@ -8,5 +8,6 @@ class Extras {
         const val TITLE = "title"
         const val URL = "url"
         const val WEEKLY = "weekly"
+        const val LINK = "link"
     }
 }

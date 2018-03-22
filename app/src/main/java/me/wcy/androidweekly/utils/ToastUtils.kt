@@ -10,24 +10,24 @@ import android.widget.Toast
  */
 @SuppressLint("StaticFieldLeak")
 object ToastUtils {
-    private var sContext: Context? = null
-    private var sToast: Toast? = null
+    private var context: Context? = null
+    private var toast: Toast? = null
 
     fun init(context: Context) {
-        sContext = context.applicationContext
+        this.context = context.applicationContext
     }
 
     fun show(resId: Int) {
-        show(sContext!!.getString(resId))
+        show(context!!.getString(resId))
     }
 
     @SuppressLint("ShowToast")
     fun show(text: String) {
-        if (sToast == null) {
-            sToast = Toast.makeText(sContext, text, Toast.LENGTH_SHORT)
+        if (toast == null) {
+            toast = Toast.makeText(context, text, Toast.LENGTH_SHORT)
         } else {
-            sToast!!.setText(text)
+            toast!!.setText(text)
         }
-        sToast!!.show()
+        toast!!.show()
     }
 }

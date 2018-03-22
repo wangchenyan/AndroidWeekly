@@ -7,6 +7,7 @@ import com.bumptech.glide.Glide
 import me.wcy.androidweekly.R
 import me.wcy.androidweekly.activity.WeeklyDetailActivity
 import me.wcy.androidweekly.model.Weekly
+import me.wcy.androidweekly.storage.ReadPreference
 import me.wcy.androidweekly.utils.binding.Bind
 import me.wcy.androidweekly.widget.radapter.RLayout
 import me.wcy.androidweekly.widget.radapter.RViewHolder
@@ -34,6 +35,8 @@ class WeeklyViewHolder(item: View) : RViewHolder<Weekly>(item) {
     init {
         item.setOnClickListener {
             WeeklyDetailActivity.start(context, data!!)
+            ReadPreference.read(data!!.url)
+            refresh()
         }
     }
 
@@ -47,6 +50,7 @@ class WeeklyViewHolder(item: View) : RViewHolder<Weekly>(item) {
                 .load(data!!.img)
                 .into(image)
         tvTitle!!.text = data!!.title
+        tvTitle.isSelected = ReadPreference.hasRead(data!!.url)
         tvDate!!.text = data!!.date
         tvComment!!.text = data!!.comment
         tvTags!!.text = data!!.tags

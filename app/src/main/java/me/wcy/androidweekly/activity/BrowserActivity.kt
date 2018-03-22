@@ -1,9 +1,12 @@
 package me.wcy.androidweekly.activity
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.PixelFormat
+import android.net.Uri
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
@@ -13,6 +16,11 @@ import com.tencent.smtt.sdk.WebView
 import com.tencent.smtt.sdk.WebViewClient
 import me.wcy.androidweekly.R
 import me.wcy.androidweekly.constants.Extras
+import me.wcy.androidweekly.model.DTO
+import me.wcy.androidweekly.model.Link
+import me.wcy.androidweekly.storage.db.DBManager
+import me.wcy.androidweekly.storage.db.greendao.LinkEntityDao
+import me.wcy.androidweekly.utils.ToastUtils
 import me.wcy.androidweekly.utils.binding.Bind
 
 class BrowserActivity : BaseActivity() {
@@ -21,31 +29,50 @@ class BrowserActivity : BaseActivity() {
     @Bind(R.id.progress_bar)
     private val progressBar: ProgressBar? = null
 
+    private var link: Link? = null
+
     companion object {
-        fun start(context: Context, title: String, url: String) {
+        fun start(context: Context, link: Link) {
             val intent = Intent(context, BrowserActivity::class.java)
-            intent.putExtra(Extras.TITLE, title)
-            intent.putExtra(Extras.URL, url)
+            intent.putExtra(Extras.LINK, link)
             context.startActivity(intent)
         }
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_browser)
         window.setFormat(PixelFormat.TRANSLUCENT)
 
-        val title = intent.getStringExtra(Extras.TITLE)
-        val url = intent.getStringExtra(Extras.URL)
+        link = intent.getSerializableExtra(Extras.LINK) as Link
 
-        setTitle(title)
-        supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_menu)
-        webView!!.settings.setSupportZoom(true)
-        webView.settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN
-        webView.settings.loadWithOverviewMode = true
+        title = link!!.title
+        supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_menu_close)
+
+        val webSetting = webView!!.settings
+        webSetting.allowFileAccess = true
+        webSetting.layoutAlgorithm = WebSettings.LayoutAlgorithm.NARROW_COLUMNS
+        webSetting.setSupportZoom(true)
+        webSetting.builtInZoomControls = true
+        webSetting.useWideViewPort = true
+        webSetting.setSupportMultipleWindows(false)
+        webSetting.loadWithOverviewMode = true
+        webSetting.setAppCacheEnabled(true)
+        webSetting.databaseEnabled = true
+        webSetting.domStorageEnabled = true
+        webSetting.javaScriptEnabled = true
+        webSetting.setGeolocationEnabled(true)
+        webSetting.setAppCacheMaxSize(java.lang.Long.MAX_VALUE)
+        webSetting.setAppCachePath(getDir("appcache", 0).path)
+        webSetting.databasePath = getDir("databases", 0).path
+        webSetting.setGeolocationDatabasePath(getDir("geolocation", 0).path)
+        webSetting.pluginState = WebSettings.PluginState.ON_DEMAND
+        webSetting.setRenderPriority(WebSettings.RenderPriority.HIGH)
+
         webView.webViewClient = webViewClient
         webView.webChromeClient = webChromeClient
-        webView.loadUrl(url)
+        webView.loadUrl(link!!.url)
     }
 
     private val webViewClient = object : WebViewClient() {
@@ -63,10 +90,51 @@ class BrowserActivity : BaseActivity() {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_collect, menu)
+        val collectItem = menu!!.findItem(R.id.action_collect)
+        val collection = DBManager.get().getLinkEntityDao()!!.queryBuilder().where(LinkEntityDao.Properties.Url.eq(link!!.url)).unique()
+        collectItem.title = if (collection == null) "收藏" else "已收藏"
+        return true
+    }
+
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (item!!.itemId == android.R.id.home) {
-            finish()
-            return true
+        when (item!!.itemId) {
+            android.R.id.home -> {
+                finish()
+                return true
+            }
+            R.id.action_collect -> {
+                if (item.title == "收藏") {
+                    DBManager.get().getLinkEntityDao()!!.insert(DTO.toLinkEntity(link!!))
+                    item.title = "已收藏"
+                    ToastUtils.show("已收藏")
+                } else {
+                    val entity = DBManager.get().getLinkEntityDao()!!.queryBuilder().where(LinkEntityDao.Properties.Url.eq(link!!.url)).build().unique()
+                    if (entity != null) {
+                        DBManager.get().getLinkEntityDao()!!.delete(entity)
+                    }
+                    item.title = "收藏"
+                    ToastUtils.show("已取消收藏")
+                }
+                return true
+            }
+            R.id.action_open_in_browser -> {
+                try {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(link!!.url))
+                    startActivity(intent)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    ToastUtils.show("打开失败")
+                }
+                return true
+            }
+            R.id.action_share -> {
+                val intent = Intent(Intent.ACTION_SEND)
+                intent.type = "text/plain"
+                intent.putExtra(Intent.EXTRA_TEXT, link!!.title.plus("\n").plus(link!!.url))
+                startActivity(Intent.createChooser(intent, "分享"))
+            }
         }
         return super.onOptionsItemSelected(item)
     }

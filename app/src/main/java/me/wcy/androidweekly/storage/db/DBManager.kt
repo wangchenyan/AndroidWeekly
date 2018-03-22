@@ -3,6 +3,7 @@ package me.wcy.androidweekly.storage.db
 import android.content.Context
 import me.wcy.androidweekly.storage.db.greendao.DaoMaster
 import me.wcy.androidweekly.storage.db.greendao.DaoSession
+import me.wcy.androidweekly.storage.db.greendao.LinkEntityDao
 import me.wcy.androidweekly.storage.db.greendao.WeeklyEntityDao
 
 /**
@@ -11,6 +12,7 @@ import me.wcy.androidweekly.storage.db.greendao.WeeklyEntityDao
 class DBManager private constructor() {
     private var daoSession: DaoSession? = null
     private var weeklyEntityDao: WeeklyEntityDao? = null
+    private var linkEntityDao: LinkEntityDao? = null
 
     companion object {
         private const val DB_NAME = "weekly_database"
@@ -26,7 +28,10 @@ class DBManager private constructor() {
         val db = helper.writableDb
         daoSession = DaoMaster(db).newSession()
         weeklyEntityDao = daoSession!!.weeklyEntityDao
+        linkEntityDao = daoSession!!.linkEntityDao
     }
 
     fun getWeeklyEntityDao() = weeklyEntityDao
+
+    fun getLinkEntityDao() = linkEntityDao
 }

@@ -7,6 +7,8 @@ import me.wcy.androidweekly.R
 import me.wcy.androidweekly.api.Api
 import me.wcy.androidweekly.api.SafeObserver
 import me.wcy.androidweekly.model.Weekly
+import me.wcy.androidweekly.storage.WeeklyCache
+import me.wcy.androidweekly.utils.ListUtils
 import me.wcy.androidweekly.utils.binding.Bind
 import me.wcy.androidweekly.viewholder.WeeklyViewHolder
 import me.wcy.androidweekly.widget.radapter.RAdapter
@@ -36,6 +38,13 @@ class WeeklyListFragment : BaseLazyFragment(), SwipeRefreshLayout.OnRefreshListe
             refreshLayout.isRefreshing = true
         }
 
+        val history = WeeklyCache.get().get(context)
+        if (!ListUtils.isEmpty(history)) {
+            weeklyList.addAll(history!!)
+            adapter.notifyDataSetChanged()
+            rvWeekly.loadMoreFinish(false, true)
+        }
+
         getWeekly(page)
     }
 
@@ -58,12 +67,13 @@ class WeeklyListFragment : BaseLazyFragment(), SwipeRefreshLayout.OnRefreshListe
                     override fun onResult(t: List<Weekly>?, e: Throwable?) {
                         refreshLayout!!.isRefreshing = false
                         if (e == null) {
-                            if (!t!!.isEmpty()) {
+                            if (!ListUtils.isEmpty(t)) {
                                 rvWeekly!!.loadMoreFinish(false, true)
                                 if (page == 1) {
                                     weeklyList.clear()
+                                    WeeklyCache.get().save(context, t!!)
                                 }
-                                weeklyList.addAll(t)
+                                weeklyList.addAll(t!!)
                                 adapter.notifyDataSetChanged()
                             } else {
                                 rvWeekly!!.loadMoreFinish(false, false)

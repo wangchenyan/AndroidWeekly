@@ -17,10 +17,10 @@ import me.wcy.androidweekly.R
 import me.wcy.androidweekly.api.Api
 import me.wcy.androidweekly.api.SafeObserver
 import me.wcy.androidweekly.constants.Extras
+import me.wcy.androidweekly.model.DTO
 import me.wcy.androidweekly.model.Weekly
 import me.wcy.androidweekly.model.WeeklyDetail
 import me.wcy.androidweekly.storage.db.DBManager
-import me.wcy.androidweekly.storage.db.WeeklyEntity
 import me.wcy.androidweekly.storage.db.greendao.WeeklyEntityDao
 import me.wcy.androidweekly.utils.ToastUtils
 import me.wcy.androidweekly.utils.binding.Bind
@@ -51,9 +51,10 @@ class WeeklyDetailActivity : BaseActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_collect, menu)
-        val collectItem = menu!!.getItem(0)
+        val collectItem = menu!!.findItem(R.id.action_collect)
         val collection = DBManager.get().getWeeklyEntityDao()!!.queryBuilder().where(WeeklyEntityDao.Properties.Url.eq(weekly!!.url)).unique()
         collectItem.title = if (collection == null) "收藏" else "已收藏"
+        collectItem.setIcon(if (collection == null) R.drawable.ic_menu_star else R.drawable.ic_menu_star_selected)
         return true
     }
 
@@ -61,7 +62,7 @@ class WeeklyDetailActivity : BaseActivity() {
         when (item!!.itemId) {
             R.id.action_collect -> {
                 if (item.title == "收藏") {
-                    DBManager.get().getWeeklyEntityDao()!!.insert(WeeklyEntity.fromWeekly(weekly))
+                    DBManager.get().getWeeklyEntityDao()!!.insert(DTO.toWeeklyEntity(weekly!!))
                     item.title = "已收藏"
                     ToastUtils.show("已收藏")
                 } else {
@@ -83,6 +84,12 @@ class WeeklyDetailActivity : BaseActivity() {
                     ToastUtils.show("打开失败")
                 }
                 return true
+            }
+            R.id.action_share -> {
+                val intent = Intent(Intent.ACTION_SEND)
+                intent.type = "text/plain"
+                intent.putExtra(Intent.EXTRA_TEXT, weekly!!.title.plus("\n").plus(weekly!!.url))
+                startActivity(Intent.createChooser(intent, "分享"))
             }
         }
         return super.onOptionsItemSelected(item)
@@ -114,7 +121,7 @@ class WeeklyDetailActivity : BaseActivity() {
                 linkSummary.text = link.summary
                 linkSummary.visibility = if (TextUtils.isEmpty(link.summary)) GONE else VISIBLE
                 linkItem.setOnClickListener {
-                    BrowserActivity.start(this, link.title!!, link.url!!)
+                    BrowserActivity.start(this, link)
                 }
                 linkContainer.addView(linkItem)
                 index++

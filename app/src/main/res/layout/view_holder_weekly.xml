@@ -9,7 +9,11 @@
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp">
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="5dp"
+        android:foreground="?android:attr/selectableItemBackground">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -19,7 +23,7 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp">
+                android:layout_height="50dp">
 
                 <ImageView
                     android:id="@+id/iv_image"
@@ -35,8 +39,8 @@
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp">
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp">
 
                     <com.makeramen.roundedimageview.RoundedImageView
                         android:id="@+id/iv_avatar"
@@ -62,17 +66,18 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="10dp"
                 android:orientation="vertical"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp">
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp">
 
                 <TextView
                     android:id="@+id/tv_title"
-                    style="@style/TextAppearance.AppCompat.Subhead"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/color_black_grey"
+                    android:textSize="16sp"
                     tools:text="ANDROID开发技术周报" />
 
                 <LinearLayout
@@ -83,27 +88,27 @@
 
                     <TextView
                         android:id="@+id/tv_date"
-                        style="@style/TextAppearance.AppCompat.Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/grey_999999"
                         android:textSize="12sp"
                         tools:text="March 12, 2018" />
 
                     <TextView
                         android:id="@+id/tv_comment"
-                        style="@style/TextAppearance.AppCompat.Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
+                        android:textColor="@color/grey_999999"
                         android:textSize="12sp"
                         tools:text="0 条评论" />
                 </LinearLayout>
 
                 <TextView
                     android:id="@+id/tv_tags"
-                    style="@style/TextAppearance.AppCompat.Small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/grey_999999"
                     android:textSize="12sp"
                     tools:text="AndroidDevWeekly" />
             </LinearLayout>

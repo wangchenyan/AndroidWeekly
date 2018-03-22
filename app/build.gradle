@@ -49,4 +49,5 @@ dependencies {
     implementation 'com.makeramen:roundedimageview:2.3.0'
     implementation 'com.hwangjr.rxbus:rxbus:2.0.0'
     implementation 'org.greenrobot:greendao:3.2.2'
+    implementation 'com.google.code.gson:gson:2.8.2'
 }

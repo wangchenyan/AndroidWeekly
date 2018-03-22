@@ -30,7 +30,7 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_menu)
+        supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_menu_menu)
         navigationView!!.setNavigationItemSelectedListener(this)
         setupViewPager()
     }
