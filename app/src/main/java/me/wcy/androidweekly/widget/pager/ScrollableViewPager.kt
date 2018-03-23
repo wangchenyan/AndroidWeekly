@@ -1,4 +1,4 @@
-package me.wcy.androidweekly.widget
+package me.wcy.androidweekly.widget.pager
 
 import android.content.Context
 import android.support.v4.view.ViewPager

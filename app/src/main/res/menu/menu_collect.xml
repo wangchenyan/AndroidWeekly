@@ -8,10 +8,12 @@
         app:showAsAction="never" />
     <item
         android:id="@+id/action_open_in_browser"
+        android:icon="@drawable/ic_menu_open"
         android:title="在浏览器中打开"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_share"
+        android:icon="@drawable/ic_menu_share"
         android:title="分享"
         app:showAsAction="never" />
 </menu>

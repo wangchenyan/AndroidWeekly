@@ -1,10 +1,13 @@
 package me.wcy.androidweekly.activity
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.view.menu.MenuBuilder
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.Menu
@@ -13,19 +16,23 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.hwangjr.rxbus.RxBus
 import me.wcy.androidweekly.R
 import me.wcy.androidweekly.api.Api
 import me.wcy.androidweekly.api.SafeObserver
 import me.wcy.androidweekly.constants.Extras
-import me.wcy.androidweekly.model.DTO
+import me.wcy.androidweekly.constants.RxBusTags
 import me.wcy.androidweekly.model.Weekly
 import me.wcy.androidweekly.model.WeeklyDetail
 import me.wcy.androidweekly.storage.db.DBManager
-import me.wcy.androidweekly.storage.db.greendao.WeeklyEntityDao
+import me.wcy.androidweekly.storage.db.greendao.WeeklyDao
+import me.wcy.androidweekly.storage.sp.ReadPreference
 import me.wcy.androidweekly.utils.ToastUtils
 import me.wcy.androidweekly.utils.binding.Bind
 
-class WeeklyDetailActivity : BaseActivity() {
+class WeeklyDetailActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
+    @Bind(R.id.refresh_layout)
+    private val refreshLayout: SwipeRefreshLayout? = null
     @Bind(R.id.link_group_container)
     private val linkGroupContainer: LinearLayout? = null
 
@@ -46,33 +53,51 @@ class WeeklyDetailActivity : BaseActivity() {
         weekly = intent.getSerializableExtra(Extras.WEEKLY) as Weekly?
 
         title = weekly!!.title
-        getWeeklyDetail(weekly!!.url!!)
+        refreshLayout!!.setOnRefreshListener(this)
+        refreshLayout.post {
+            refreshLayout.isRefreshing = true
+        }
+        getWeeklyDetail()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_collect, menu)
         val collectItem = menu!!.findItem(R.id.action_collect)
-        val collection = DBManager.get().getWeeklyEntityDao()!!.queryBuilder().where(WeeklyEntityDao.Properties.Url.eq(weekly!!.url)).unique()
-        collectItem.title = if (collection == null) "收藏" else "已收藏"
-        collectItem.setIcon(if (collection == null) R.drawable.ic_menu_star else R.drawable.ic_menu_star_selected)
+        val collection = DBManager.get().getWeeklyEntityDao()!!.queryBuilder().where(WeeklyDao.Properties.Url.eq(weekly!!.url)).unique()
+        setCollectMenuItem(collectItem, collection != null)
         return true
+    }
+
+    @SuppressLint("RestrictedApi")
+    override fun onMenuOpened(featureId: Int, menu: Menu?): Boolean {
+        if (menu is MenuBuilder) {
+            menu.setOptionalIconsVisible(true)
+        }
+        return super.onMenuOpened(featureId, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item!!.itemId) {
             R.id.action_collect -> {
-                if (item.title == "收藏") {
-                    DBManager.get().getWeeklyEntityDao()!!.insert(DTO.toWeeklyEntity(weekly!!))
-                    item.title = "已收藏"
-                    ToastUtils.show("已收藏")
+                val collected: Boolean
+                if (!DBManager.get().hasCollect(weekly!!)) {
+                    collected = true
+                    weekly!!.time = System.currentTimeMillis()
+                    DBManager.get().getWeeklyEntityDao()!!.insert(weekly)
                 } else {
-                    val entity = DBManager.get().getWeeklyEntityDao()!!.queryBuilder().where(WeeklyEntityDao.Properties.Url.eq(weekly!!.url)).build().unique()
+                    collected = false
+                    val entity = DBManager.get()
+                            .getWeeklyEntityDao()!!
+                            .queryBuilder()
+                            .where(WeeklyDao.Properties.Url.eq(weekly!!.url))
+                            .unique()
                     if (entity != null) {
                         DBManager.get().getWeeklyEntityDao()!!.delete(entity)
                     }
-                    item.title = "收藏"
-                    ToastUtils.show("已取消收藏")
                 }
+                RxBus.get().post(RxBusTags.WEEKLY_COLLECTION, weekly)
+                setCollectMenuItem(item, collected)
+                ToastUtils.show(if (collected) "已收藏" else "已取消收藏")
                 return true
             }
             R.id.action_open_in_browser -> {
@@ -95,12 +120,22 @@ class WeeklyDetailActivity : BaseActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun getWeeklyDetail(url: String) {
-        Api.get().getWeeklyDetail(url)
+    override fun onRefresh() {
+        getWeeklyDetail()
+    }
+
+    private fun getWeeklyDetail() {
+        Api.get().getWeeklyDetail(weekly!!.url!!)
                 .subscribe(object : SafeObserver<WeeklyDetail>(this as Activity) {
                     override fun onResult(t: WeeklyDetail?, e: Throwable?) {
+                        refreshLayout!!.post {
+                            refreshLayout.isRefreshing = false
+                        }
                         if (e == null) {
+                            refreshLayout.isEnabled = false
                             showWeeklyDetail(t!!)
+                        } else {
+                            ToastUtils.show("加载失败，请下拉刷新")
                         }
                     }
                 })
@@ -118,15 +153,23 @@ class WeeklyDetailActivity : BaseActivity() {
                 val linkTitle = linkItem.findViewById<TextView>(R.id.tv_title)
                 val linkSummary = linkItem.findViewById<TextView>(R.id.tv_summary)
                 linkTitle.text = index.toString().plus(". ").plus(link.title)
+                linkTitle.isSelected = ReadPreference.hasRead(link.url)
                 linkSummary.text = link.summary
                 linkSummary.visibility = if (TextUtils.isEmpty(link.summary)) GONE else VISIBLE
                 linkItem.setOnClickListener {
                     BrowserActivity.start(this, link)
+                    ReadPreference.read(link.url)
+                    linkTitle.isSelected = true
                 }
                 linkContainer.addView(linkItem)
                 index++
             }
             linkGroupContainer!!.addView(group)
         }
+    }
+
+    private fun setCollectMenuItem(item: MenuItem, collected: Boolean) {
+        item.title = if (collected) "已收藏" else "收藏"
+        item.setIcon(if (collected) R.drawable.ic_menu_star_selected else R.drawable.ic_menu_star)
     }
 }

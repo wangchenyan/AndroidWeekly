@@ -1,4 +1,4 @@
-package me.wcy.androidweekly.storage
+package me.wcy.androidweekly.storage.cache
 
 import android.content.Context
 import com.google.gson.Gson

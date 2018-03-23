@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import com.hwangjr.rxbus.RxBus
 import me.wcy.androidweekly.R
 import me.wcy.androidweekly.utils.binding.ViewBinder
 
@@ -19,7 +20,7 @@ abstract class BaseLazyFragment : Fragment() {
     private var isLazyCreate: Boolean = false
 
     companion object {
-        private val TAG = "Fragment"
+        private const val TAG = "Fragment"
     }
 
     protected abstract val layoutResId: Int
@@ -63,16 +64,16 @@ abstract class BaseLazyFragment : Fragment() {
         Log.d(TAG, javaClass.simpleName + " onLazyCreate")
         onLazyCreate()
         isLazyCreate = true
-        //RxBus.get().register(this);
+        RxBus.get().register(this)
     }
 
     protected abstract fun onLazyCreate()
 
     override fun onDestroy() {
-        super.onDestroy()
         if (isLazyCreate) {
             onLazyDestroy()
         }
+        super.onDestroy()
     }
 
     protected fun onVisible() {}
@@ -81,6 +82,6 @@ abstract class BaseLazyFragment : Fragment() {
 
     protected fun onLazyDestroy() {
         Log.d(TAG, javaClass.simpleName + " onLazyDestroy")
-        //RxBus.get().unregister(this);
+        RxBus.get().unregister(this)
     }
 }

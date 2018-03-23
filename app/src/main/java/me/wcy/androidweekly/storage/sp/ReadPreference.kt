@@ -1,4 +1,4 @@
-package me.wcy.androidweekly.storage
+package me.wcy.androidweekly.storage.sp
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -11,7 +11,7 @@ object ReadPreference {
     private var sp: SharedPreferences? = null
 
     fun init(context: Context) {
-        this.sp = context.getSharedPreferences("read_record", Context.MODE_PRIVATE)
+        sp = context.getSharedPreferences("read_record", Context.MODE_PRIVATE)
     }
 
     fun read(url: String?) {

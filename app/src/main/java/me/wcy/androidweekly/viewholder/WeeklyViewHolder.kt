@@ -7,7 +7,7 @@ import com.bumptech.glide.Glide
 import me.wcy.androidweekly.R
 import me.wcy.androidweekly.activity.WeeklyDetailActivity
 import me.wcy.androidweekly.model.Weekly
-import me.wcy.androidweekly.storage.ReadPreference
+import me.wcy.androidweekly.storage.sp.ReadPreference
 import me.wcy.androidweekly.utils.binding.Bind
 import me.wcy.androidweekly.widget.radapter.RLayout
 import me.wcy.androidweekly.widget.radapter.RViewHolder

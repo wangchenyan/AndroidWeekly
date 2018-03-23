@@ -1,4 +1,4 @@
-package me.wcy.androidweekly.storage.db;
+package me.wcy.androidweekly.model;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
@@ -7,11 +7,15 @@ import org.greenrobot.greendao.annotation.Index;
 import org.greenrobot.greendao.annotation.NotNull;
 import org.greenrobot.greendao.annotation.Property;
 
+import java.io.Serializable;
+
 /**
  * Created by hzwangchenyan on 2018/3/22.
  */
 @Entity(nameInDb = "favorite_link")
-public class LinkEntity {
+public class Link implements Serializable {
+    private static final long serialVersionUID = 166134149929227271L;
+
     @Id(autoincrement = true)
     @Property(nameInDb = "id")
     private Long id;
@@ -31,13 +35,13 @@ public class LinkEntity {
     @Property(nameInDb = "time")
     private Long time;
 
-    @Generated(hash = 1585243722)
-    public LinkEntity() {
+    @Generated(hash = 225969300)
+    public Link() {
     }
 
-    @Generated(hash = 1107041173)
-    public LinkEntity(Long id, @NotNull String url, @NotNull String title,
-                      String summary, Long time) {
+    @Generated(hash = 1487318691)
+    public Link(Long id, @NotNull String url, @NotNull String title, String summary,
+                Long time) {
         this.id = id;
         this.url = url;
         this.title = title;

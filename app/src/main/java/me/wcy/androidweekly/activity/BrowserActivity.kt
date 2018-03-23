@@ -6,20 +6,22 @@ import android.content.Intent
 import android.graphics.PixelFormat
 import android.net.Uri
 import android.os.Bundle
+import android.support.v7.view.menu.MenuBuilder
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
+import com.hwangjr.rxbus.RxBus
 import com.tencent.smtt.sdk.WebChromeClient
 import com.tencent.smtt.sdk.WebSettings
 import com.tencent.smtt.sdk.WebView
 import com.tencent.smtt.sdk.WebViewClient
 import me.wcy.androidweekly.R
 import me.wcy.androidweekly.constants.Extras
-import me.wcy.androidweekly.model.DTO
+import me.wcy.androidweekly.constants.RxBusTags
 import me.wcy.androidweekly.model.Link
 import me.wcy.androidweekly.storage.db.DBManager
-import me.wcy.androidweekly.storage.db.greendao.LinkEntityDao
+import me.wcy.androidweekly.storage.db.greendao.LinkDao
 import me.wcy.androidweekly.utils.ToastUtils
 import me.wcy.androidweekly.utils.binding.Bind
 
@@ -93,9 +95,17 @@ class BrowserActivity : BaseActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_collect, menu)
         val collectItem = menu!!.findItem(R.id.action_collect)
-        val collection = DBManager.get().getLinkEntityDao()!!.queryBuilder().where(LinkEntityDao.Properties.Url.eq(link!!.url)).unique()
-        collectItem.title = if (collection == null) "收藏" else "已收藏"
+        val collection = DBManager.get().getLinkEntityDao()!!.queryBuilder().where(LinkDao.Properties.Url.eq(link!!.url)).unique()
+        setCollectMenuItem(collectItem, collection != null)
         return true
+    }
+
+    @SuppressLint("RestrictedApi")
+    override fun onMenuOpened(featureId: Int, menu: Menu?): Boolean {
+        if (menu is MenuBuilder) {
+            menu.setOptionalIconsVisible(true)
+        }
+        return super.onMenuOpened(featureId, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -105,18 +115,20 @@ class BrowserActivity : BaseActivity() {
                 return true
             }
             R.id.action_collect -> {
-                if (item.title == "收藏") {
-                    DBManager.get().getLinkEntityDao()!!.insert(DTO.toLinkEntity(link!!))
-                    item.title = "已收藏"
-                    ToastUtils.show("已收藏")
+                val collected: Boolean
+                if (!DBManager.get().hasCollect(link!!)) {
+                    collected = true
+                    DBManager.get().getLinkEntityDao()!!.insert(link)
                 } else {
-                    val entity = DBManager.get().getLinkEntityDao()!!.queryBuilder().where(LinkEntityDao.Properties.Url.eq(link!!.url)).build().unique()
+                    collected = false
+                    val entity = DBManager.get().getLinkEntityDao()!!.queryBuilder().where(LinkDao.Properties.Url.eq(link!!.url)).build().unique()
                     if (entity != null) {
                         DBManager.get().getLinkEntityDao()!!.delete(entity)
                     }
-                    item.title = "收藏"
-                    ToastUtils.show("已取消收藏")
                 }
+                RxBus.get().post(RxBusTags.LINK_COLLECTION, link)
+                setCollectMenuItem(item, collected)
+                ToastUtils.show(if (collected) "已收藏" else "已取消收藏")
                 return true
             }
             R.id.action_open_in_browser -> {
@@ -137,6 +149,11 @@ class BrowserActivity : BaseActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun setCollectMenuItem(item: MenuItem, collected: Boolean) {
+        item.title = if (collected) "已收藏" else "收藏"
+        item.setIcon(if (collected) R.drawable.ic_menu_star_selected else R.drawable.ic_menu_star)
     }
 
     override fun onBackPressed() {

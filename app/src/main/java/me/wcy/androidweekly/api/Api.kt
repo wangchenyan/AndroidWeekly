@@ -5,8 +5,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import me.wcy.androidweekly.converter.WeeklyDetailConverter
 import me.wcy.androidweekly.converter.WeeklyListConverter
-import me.wcy.androidweekly.model.Weekly
 import me.wcy.androidweekly.model.WeeklyDetail
+import me.wcy.androidweekly.model.Weekly
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory

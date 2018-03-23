@@ -4,14 +4,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <android.support.design.widget.TabLayout
-        android:id="@+id/tab_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white" />
-
-    <FrameLayout
-        android:id="@+id/fragment_container"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_collect_weekly"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </LinearLayout>

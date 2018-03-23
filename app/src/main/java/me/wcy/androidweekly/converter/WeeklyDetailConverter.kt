@@ -2,9 +2,9 @@ package me.wcy.androidweekly.converter
 
 import android.text.TextUtils
 import me.wcy.androidweekly.api.Api
-import me.wcy.androidweekly.model.Link
 import me.wcy.androidweekly.model.LinkGroup
 import me.wcy.androidweekly.model.WeeklyDetail
+import me.wcy.androidweekly.model.Link
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 

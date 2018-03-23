@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
+import com.hwangjr.rxbus.RxBus
 import me.wcy.androidweekly.R
 import me.wcy.androidweekly.utils.binding.ViewBinder
 
@@ -22,6 +23,7 @@ abstract class BaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         handler = Handler()
+        RxBus.get().register(this)
     }
 
     override fun setContentView(layoutResID: Int) {
@@ -67,5 +69,10 @@ abstract class BaseActivity : AppCompatActivity() {
         } else {
             supportFragmentManager.isDestroyed
         }
+    }
+
+    override fun onDestroy() {
+        RxBus.get().unregister(this)
+        super.onDestroy()
     }
 }

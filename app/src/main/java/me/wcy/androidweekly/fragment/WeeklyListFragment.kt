@@ -6,9 +6,10 @@ import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView
 import me.wcy.androidweekly.R
 import me.wcy.androidweekly.api.Api
 import me.wcy.androidweekly.api.SafeObserver
+import me.wcy.androidweekly.storage.cache.WeeklyCache
 import me.wcy.androidweekly.model.Weekly
-import me.wcy.androidweekly.storage.WeeklyCache
 import me.wcy.androidweekly.utils.ListUtils
+import me.wcy.androidweekly.utils.ToastUtils
 import me.wcy.androidweekly.utils.binding.Bind
 import me.wcy.androidweekly.viewholder.WeeklyViewHolder
 import me.wcy.androidweekly.widget.radapter.RAdapter
@@ -65,7 +66,9 @@ class WeeklyListFragment : BaseLazyFragment(), SwipeRefreshLayout.OnRefreshListe
         Api.get().getWeeklyList(page)
                 .subscribe(object : SafeObserver<List<Weekly>>(this) {
                     override fun onResult(t: List<Weekly>?, e: Throwable?) {
-                        refreshLayout!!.isRefreshing = false
+                        refreshLayout!!.post {
+                            refreshLayout.isRefreshing = false
+                        }
                         if (e == null) {
                             if (!ListUtils.isEmpty(t)) {
                                 rvWeekly!!.loadMoreFinish(false, true)
@@ -79,7 +82,11 @@ class WeeklyListFragment : BaseLazyFragment(), SwipeRefreshLayout.OnRefreshListe
                                 rvWeekly!!.loadMoreFinish(false, false)
                             }
                         } else {
-                            rvWeekly!!.loadMoreError(0, null)
+                            if (page == 1) {
+                                ToastUtils.show("加载失败，请下拉刷新")
+                            } else {
+                                rvWeekly!!.loadMoreError(0, null)
+                            }
                         }
                     }
                 })
