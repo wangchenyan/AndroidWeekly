@@ -37,6 +37,7 @@ class BrowserActivity : BaseActivity() {
         fun start(context: Context, link: Link) {
             val intent = Intent(context, BrowserActivity::class.java)
             intent.putExtra(Extras.LINK, link)
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
             context.startActivity(intent)
         }
     }

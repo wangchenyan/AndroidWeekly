@@ -1,8 +1,9 @@
 package me.wcy.androidweekly
 
 import android.app.Application
-import me.wcy.androidweekly.storage.sp.ReadPreference
+import com.tencent.smtt.sdk.QbSdk
 import me.wcy.androidweekly.storage.db.DBManager
+import me.wcy.androidweekly.storage.sp.ReadPreference
 import me.wcy.androidweekly.utils.ToastUtils
 
 /**
@@ -15,5 +16,6 @@ class WeeklyApplication : Application() {
         ToastUtils.init(this)
         DBManager.get().init(this)
         ReadPreference.init(this)
+        QbSdk.initX5Environment(this, null)
     }
 }
