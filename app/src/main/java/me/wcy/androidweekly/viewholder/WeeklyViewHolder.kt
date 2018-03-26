@@ -18,10 +18,6 @@ import me.wcy.androidweekly.widget.radapter.RViewHolder
  */
 @RLayout(R.layout.view_holder_weekly)
 class WeeklyViewHolder(item: View) : RViewHolder<Weekly>(item) {
-    @Bind(R.id.iv_avatar)
-    private val ivAvatar: ImageView? = null
-    @Bind(R.id.tv_author)
-    private val tvAuthor: TextView? = null
     @Bind(R.id.iv_image)
     private val image: ImageView? = null
     @Bind(R.id.tv_title)
@@ -42,12 +38,6 @@ class WeeklyViewHolder(item: View) : RViewHolder<Weekly>(item) {
     }
 
     override fun refresh() {
-        Glide.with(context)
-                .load(data!!.author_avatar)
-                .asBitmap()
-                .placeholder(R.drawable.image_placeholder)
-                .into(ivAvatar)
-        tvAuthor!!.text = data!!.author_name
         Glide.with(context)
                 .load(data!!.img)
                 .placeholder(R.drawable.image_placeholder)

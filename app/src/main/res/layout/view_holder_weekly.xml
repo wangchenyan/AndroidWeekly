@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -18,64 +17,28 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:padding="16dp">
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="50dp">
-
-                <ImageView
-                    android:id="@+id/iv_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:contentDescription="@null"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/image_placeholder" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp">
-
-                    <com.makeramen.roundedimageview.RoundedImageView
-                        android:id="@+id/iv_avatar"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/image_placeholder"
-                        app:riv_border_color="@color/white"
-                        app:riv_border_width="1dp"
-                        app:riv_oval="true" />
-
-                    <TextView
-                        android:id="@+id/tv_author"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
-                        android:textColor="@color/white"
-                        android:textSize="14sp"
-                        tools:text="脉脉不得语" />
-                </LinearLayout>
-            </FrameLayout>
+            <ImageView
+                android:id="@+id/iv_image"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:contentDescription="@null"
+                android:scaleType="centerCrop"
+                android:src="@drawable/image_placeholder" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="10dp"
-                android:orientation="vertical"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp">
+                android:layout_marginLeft="12dp"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/tv_title"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="42dp"
+                    android:maxLines="2"
                     android:textColor="@color/color_black_grey"
                     android:textSize="16sp"
                     tools:text="ANDROID开发技术周报" />
