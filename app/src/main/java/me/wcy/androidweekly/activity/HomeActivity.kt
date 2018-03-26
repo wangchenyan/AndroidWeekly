@@ -27,6 +27,7 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private val viewPager: ScrollableViewPager? = null
 
     private var fragmentAdapter: FragmentAdapter? = null
+    private var menu: Menu? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +46,7 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        this.menu = menu
         menuInflater.inflate(R.menu.menu_search, menu)
         return true
     }
@@ -65,10 +67,12 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private fun setupViewPager() {
         val fragmentList = mutableListOf<Fragment>()
         val titleList = mutableListOf<String>()
-        fragmentList.add(WeeklyListFragment())
+        fragmentList.add(WeeklyListFragment.newInstance(WeeklyListFragment.TYPE_WEEKLY))
         fragmentList.add(CollectionFragment())
+        fragmentList.add(WeeklyListFragment.newInstance(WeeklyListFragment.TYPE_SPECIAL))
         titleList.add("Android 开发技术周报")
         titleList.add("收藏")
+        titleList.add("特刊")
         fragmentAdapter = FragmentAdapter(supportFragmentManager, fragmentList)
         fragmentAdapter!!.setTitleList(titleList)
         viewPager!!.setScrollable(false)
@@ -87,8 +91,8 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         override fun onPageSelected(position: Int) {
             title = fragmentAdapter!!.getPageTitle(position)
+            menu!!.findItem(R.id.action_search).isVisible = position == 0
         }
-
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -103,6 +107,12 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             R.id.action_collection -> {
                 if (viewPager!!.currentItem != 1) {
                     viewPager.setCurrentItem(1, false)
+                }
+                return true
+            }
+            R.id.action_special -> {
+                if (viewPager!!.currentItem != 2) {
+                    viewPager.setCurrentItem(2, false)
                 }
                 return true
             }

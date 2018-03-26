@@ -9,5 +9,6 @@ class Extras {
         const val URL = "url"
         const val WEEKLY = "weekly"
         const val LINK = "link"
+        const val TYPE = "type"
     }
 }

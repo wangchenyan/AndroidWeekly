@@ -27,7 +27,8 @@ class Api private constructor() {
     private val api: IApi
 
     companion object {
-        const val BASE_URL: String = "https://www.androidweekly.cn/"
+        const val BASE_URL = "https://www.androidweekly.cn/"
+        const val PAGE_SIZE = 6
         private val FORMAT = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
         fun get() = SingletonHolder.instance
     }
@@ -53,6 +54,16 @@ class Api private constructor() {
 
     fun getWeeklyList(page: Int): Single<List<Weekly>> {
         return api.getWeeklyList(page)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .map {
+                    return@map WeeklyListConverter().convert(it)
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    fun getSpecialWeeklyList(page: Int): Single<List<Weekly>> {
+        return api.getSpecialWeeklyList(page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .map {

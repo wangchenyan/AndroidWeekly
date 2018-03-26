@@ -12,6 +12,9 @@ interface IApi {
     @GET("page/{page}/")
     fun getWeeklyList(@Path("page") page: Int): Single<String>
 
+    @GET("tag/androiddevspecialweekly/page/{page}/")
+    fun getSpecialWeeklyList(@Path("page") page: Int): Single<String>
+
     @GET
     fun getWeeklyDetail(@Url url: String): Single<String>
 
