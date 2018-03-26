@@ -22,12 +22,6 @@ abstract class SafeObserver<T> : SingleObserver<T> {
         }
     }
 
-    constructor(activity: BaseActivity?) {
-        if (activity != null) {
-            activityRef = WeakReference(activity)
-        }
-    }
-
     constructor(fragment: Fragment?) {
         if (fragment != null) {
             fragmentRef = WeakReference(fragment)

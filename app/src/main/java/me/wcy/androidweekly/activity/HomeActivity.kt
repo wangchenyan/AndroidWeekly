@@ -7,6 +7,7 @@ import android.support.v4.view.GravityCompat
 import android.support.v4.view.ViewPager
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.widget.Toolbar
+import android.view.Menu
 import android.view.MenuItem
 import me.wcy.androidweekly.R
 import me.wcy.androidweekly.fragment.CollectionFragment
@@ -43,10 +44,20 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         return false
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_search, menu)
+        return true
+    }
+
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (item!!.itemId == android.R.id.home) {
-            drawerLayout!!.openDrawer(GravityCompat.START)
-            return true
+        when (item!!.itemId) {
+            android.R.id.home -> {
+                drawerLayout!!.openDrawer(GravityCompat.START)
+                return true
+            }
+            R.id.action_search -> {
+                SearchActivity.start(this)
+            }
         }
         return super.onOptionsItemSelected(item)
     }

@@ -1,7 +1,6 @@
 package me.wcy.androidweekly.converter
 
 import android.text.TextUtils
-import android.util.Log
 import me.wcy.androidweekly.api.Api
 import me.wcy.androidweekly.model.Weekly
 import org.jsoup.Jsoup
@@ -18,7 +17,7 @@ class WeeklyListConverter : Converter<List<Weekly>> {
             throw NullPointerException()
         }
 
-        val list: MutableList<Weekly> = mutableListOf()
+        val list = mutableListOf<Weekly>()
         val baseUrl = Api.BASE_URL.dropLast(1)
         val document = Jsoup.parse(html, baseUrl)
         val articles = document.getElementsByTag("article")
@@ -59,8 +58,6 @@ class WeeklyListConverter : Converter<List<Weekly>> {
 
             list.add(weekly)
         }
-
-        Log.e("weekly", list.toString())
 
         return list
     }

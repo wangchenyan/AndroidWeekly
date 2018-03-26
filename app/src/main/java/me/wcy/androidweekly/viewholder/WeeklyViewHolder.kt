@@ -1,5 +1,6 @@
 package me.wcy.androidweekly.viewholder
 
+import android.text.TextUtils
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -44,15 +45,17 @@ class WeeklyViewHolder(item: View) : RViewHolder<Weekly>(item) {
         Glide.with(context)
                 .load(data!!.author_avatar)
                 .asBitmap()
+                .placeholder(R.drawable.image_placeholder)
                 .into(ivAvatar)
         tvAuthor!!.text = data!!.author_name
         Glide.with(context)
                 .load(data!!.img)
+                .placeholder(R.drawable.image_placeholder)
                 .into(image)
         tvTitle!!.text = data!!.title
         tvTitle.isSelected = ReadPreference.hasRead(data!!.url)
-        tvDate!!.text = data!!.date
-        tvComment!!.text = data!!.comment
-        tvTags!!.text = data!!.tags
+        tvDate!!.text = if (TextUtils.isEmpty(data!!.date)) null else data!!.date
+        tvComment!!.text = if (TextUtils.isEmpty(data!!.comment)) null else data!!.comment
+        tvTags!!.text = if (TextUtils.isEmpty(data!!.tags)) null else data!!.tags
     }
 }
