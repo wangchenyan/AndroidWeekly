@@ -142,7 +142,7 @@ class WeeklyDetailActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListene
     }
 
     private fun showWeeklyDetail(weeklyDetail: WeeklyDetail) {
-        weeklyDetail.newsList!!.forEach { linkGroup ->
+        weeklyDetail.groupList!!.forEach { linkGroup ->
             val group = LayoutInflater.from(this).inflate(R.layout.link_group, linkGroupContainer, false)
             val linkContainer = group.findViewById<LinearLayout>(R.id.link_container)
             val groupTitle = group.findViewById<TextView>(R.id.tv_group_title)

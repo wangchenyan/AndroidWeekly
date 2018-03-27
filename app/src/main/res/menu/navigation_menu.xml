@@ -15,5 +15,10 @@
             android:id="@+id/action_special"
             android:icon="@drawable/ic_menu_special"
             android:title="特刊" />
+
+        <item
+            android:id="@+id/action_jobs"
+            android:icon="@drawable/ic_menu_special"
+            android:title="酷工作" />
     </group>
 </menu>

@@ -11,5 +11,11 @@ data class LinkGroup(
 ) : Serializable
 
 data class WeeklyDetail(
-        var newsList: MutableList<LinkGroup>? = null
+        var groupList: MutableList<LinkGroup>? = null
+) : Serializable
+
+data class Jobs(
+        var publishUrl: String? = null,
+        var quote: String? = null,
+        var groupList: MutableList<LinkGroup>? = null
 ) : Serializable

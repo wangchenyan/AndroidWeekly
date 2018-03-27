@@ -20,4 +20,7 @@ interface IApi {
 
     @POST("https://1hjizn5dia-dsn.algolia.net/1/indexes/*/queries?x-algolia-agent=Algolia%20for%20vanilla%20JavaScript%20(lite)%203.26.0%3BJS%20Helper%202.23.2&x-algolia-application-id=1HJIZN5DIA&x-algolia-api-key=936b8acf3a8d1dd7ea0cad3d011bd307")
     fun search(@Body body: RequestBody): Single<String>
+
+    @GET("cool-jobs/")
+    fun getJobs(): Single<String>
 }

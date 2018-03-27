@@ -11,6 +11,7 @@ import android.view.Menu
 import android.view.MenuItem
 import me.wcy.androidweekly.R
 import me.wcy.androidweekly.fragment.CollectionFragment
+import me.wcy.androidweekly.fragment.JobsFragment
 import me.wcy.androidweekly.fragment.WeeklyListFragment
 import me.wcy.androidweekly.utils.binding.Bind
 import me.wcy.androidweekly.widget.pager.FragmentAdapter
@@ -70,9 +71,11 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         fragmentList.add(WeeklyListFragment.newInstance(WeeklyListFragment.TYPE_WEEKLY))
         fragmentList.add(CollectionFragment())
         fragmentList.add(WeeklyListFragment.newInstance(WeeklyListFragment.TYPE_SPECIAL))
+        fragmentList.add(JobsFragment())
         titleList.add("Android 开发技术周报")
         titleList.add("收藏")
         titleList.add("特刊")
+        titleList.add("酷工作")
         fragmentAdapter = FragmentAdapter(supportFragmentManager, fragmentList)
         fragmentAdapter!!.setTitleList(titleList)
         viewPager!!.setScrollable(false)
@@ -113,6 +116,12 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             R.id.action_special -> {
                 if (viewPager!!.currentItem != 2) {
                     viewPager.setCurrentItem(2, false)
+                }
+                return true
+            }
+            R.id.action_jobs -> {
+                if (viewPager!!.currentItem != 3) {
+                    viewPager.setCurrentItem(3, false)
                 }
                 return true
             }

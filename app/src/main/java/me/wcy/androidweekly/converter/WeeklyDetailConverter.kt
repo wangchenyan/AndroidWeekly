@@ -2,9 +2,9 @@ package me.wcy.androidweekly.converter
 
 import android.text.TextUtils
 import me.wcy.androidweekly.api.Api
+import me.wcy.androidweekly.model.Link
 import me.wcy.androidweekly.model.LinkGroup
 import me.wcy.androidweekly.model.WeeklyDetail
-import me.wcy.androidweekly.model.Link
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 
@@ -19,7 +19,7 @@ class WeeklyDetailConverter : Converter<WeeklyDetail> {
         }
 
         val weeklyDetail = WeeklyDetail()
-        weeklyDetail.newsList = mutableListOf()
+        weeklyDetail.groupList = mutableListOf()
         val baseUrl = Api.BASE_URL.dropLast(1)
         val document = Jsoup.parse(html, baseUrl)
         val contentEle = document.getElementsByClass("post-entry")[0]
@@ -27,22 +27,22 @@ class WeeklyDetailConverter : Converter<WeeklyDetail> {
         val h3Tags = articleEle.getElementsByTag("h3")
         val olTags = articleEle.getElementsByTag("ol")
         for (i in h3Tags.indices) {
-            weeklyDetail.newsList!!.add(parseLinkGroup(h3Tags[i], olTags[i]))
+            weeklyDetail.groupList!!.add(parseLinkGroup(h3Tags[i], olTags[i]))
         }
 
 //        val bookEle = contentEle.getElementById("post-book-list")
 //        if (bookEle != null) {
-//            weeklyDetail.newsList!!.add(parseLinkGroup(bookEle))
+//            weeklyDetail.groupList!!.add(parseLinkGroup(bookEle))
 //        }
 //
 //        val eventEle = contentEle.getElementById("post-event-list")
 //        if (eventEle != null) {
-//            weeklyDetail.newsList!!.add(parseLinkGroup(eventEle))
+//            weeklyDetail.groupList!!.add(parseLinkGroup(eventEle))
 //        }
 //
 //        val jobsEle = contentEle.getElementById("post-jobs-info-list")
 //        if (jobsEle != null) {
-//            weeklyDetail.newsList!!.add(parseLinkGroup(jobsEle))
+//            weeklyDetail.groupList!!.add(parseLinkGroup(jobsEle))
 //        }
 
         return weeklyDetail

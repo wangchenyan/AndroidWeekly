@@ -5,8 +5,10 @@ import com.google.gson.JsonParser
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import me.wcy.androidweekly.converter.JobsConverter
 import me.wcy.androidweekly.converter.WeeklyDetailConverter
 import me.wcy.androidweekly.converter.WeeklyListConverter
+import me.wcy.androidweekly.model.Jobs
 import me.wcy.androidweekly.model.Weekly
 import me.wcy.androidweekly.model.WeeklyDetail
 import okhttp3.MediaType
@@ -111,6 +113,16 @@ class Api private constructor() {
                         weeklies.add(weekly)
                     }
                     return@map weeklies
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    fun getJobs(): Single<Jobs> {
+        return api.getJobs()
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .map {
+                    return@map JobsConverter().convert(it)
                 }
                 .observeOn(AndroidSchedulers.mainThread())
     }
