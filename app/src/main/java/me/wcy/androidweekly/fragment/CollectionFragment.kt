@@ -9,14 +9,19 @@ import me.wcy.androidweekly.widget.pager.TabLayoutPager
 /**
  * Created by hzwangchenyan on 2018/3/13.
  */
-class CollectionFragment : BaseLazyFragment() {
+class CollectionFragment : BaseNaviFragment() {
     @Bind(R.id.tab_layout)
     private val tabLayout: TabLayout? = null
     @Bind(R.id.fragment_container)
     private val fragmentContainer: FrameLayout? = null
 
-    override val layoutResId: Int
-        get() = R.layout.fragment_collection
+    override fun layoutResId(): Int {
+        return R.layout.fragment_collection
+    }
+
+    override fun navigationMenuId(): Int {
+        return R.id.action_collection
+    }
 
     override fun onLazyCreate() {
         val tabLayoutPager = TabLayoutPager(childFragmentManager, fragmentContainer!!, tabLayout!!)

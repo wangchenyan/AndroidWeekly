@@ -3,6 +3,7 @@ package me.wcy.androidweekly.fragment
 import android.support.v4.widget.SwipeRefreshLayout
 import android.text.TextUtils
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -11,6 +12,7 @@ import me.wcy.androidweekly.activity.BrowserActivity
 import me.wcy.androidweekly.api.Api
 import me.wcy.androidweekly.api.SafeObserver
 import me.wcy.androidweekly.model.Jobs
+import me.wcy.androidweekly.model.Link
 import me.wcy.androidweekly.storage.sp.ReadPreference
 import me.wcy.androidweekly.utils.ToastUtils
 import me.wcy.androidweekly.utils.binding.Bind
@@ -18,7 +20,7 @@ import me.wcy.androidweekly.utils.binding.Bind
 /**
  * Created by hzwangchenyan on 2018/3/26.
  */
-class JobsFragment : BaseLazyFragment(), SwipeRefreshLayout.OnRefreshListener {
+class JobsFragment : BaseNaviFragment(), SwipeRefreshLayout.OnRefreshListener {
     @Bind(R.id.refresh_layout)
     private val refreshLayout: SwipeRefreshLayout? = null
     @Bind(R.id.link_group_container)
@@ -26,8 +28,19 @@ class JobsFragment : BaseLazyFragment(), SwipeRefreshLayout.OnRefreshListener {
     @Bind(R.id.tv_quote)
     private val tvQuote: TextView? = null
 
-    override val layoutResId: Int
-        get() = R.layout.fragment_jobs
+    private var jobs: Jobs? = null
+
+    override fun layoutResId(): Int {
+        return R.layout.fragment_jobs
+    }
+
+    override fun navigationMenuId(): Int {
+        return R.id.action_jobs
+    }
+
+    override fun getMenuItemIds(): Array<Int> {
+        return arrayOf(R.id.action_publish)
+    }
 
     override fun onLazyCreate() {
         refreshLayout!!.setOnRefreshListener(this)
@@ -35,6 +48,18 @@ class JobsFragment : BaseLazyFragment(), SwipeRefreshLayout.OnRefreshListener {
             refreshLayout.isRefreshing = true
         }
         getJobs()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item!!.itemId) {
+            R.id.action_publish -> {
+                val link = Link()
+                link.url = jobs!!.publishUrl
+                link.title = "发布招聘信息"
+                BrowserActivity.start(context, link)
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onRefresh() {
@@ -50,7 +75,8 @@ class JobsFragment : BaseLazyFragment(), SwipeRefreshLayout.OnRefreshListener {
                         }
                         if (e == null) {
                             refreshLayout.isEnabled = false
-                            showJobs(t!!)
+                            jobs = t
+                            showJobs()
                         } else {
                             ToastUtils.show("加载失败，请下拉刷新")
                         }
@@ -58,8 +84,8 @@ class JobsFragment : BaseLazyFragment(), SwipeRefreshLayout.OnRefreshListener {
                 })
     }
 
-    private fun showJobs(jobs: Jobs) {
-        jobs.groupList!!.forEach { linkGroup ->
+    private fun showJobs() {
+        jobs!!.groupList!!.forEach { linkGroup ->
             val group = LayoutInflater.from(context).inflate(R.layout.link_group, linkGroupContainer, false)
             val linkContainer = group.findViewById<LinearLayout>(R.id.link_container)
             val groupTitle = group.findViewById<TextView>(R.id.tv_group_title)
@@ -73,8 +99,8 @@ class JobsFragment : BaseLazyFragment(), SwipeRefreshLayout.OnRefreshListener {
                 linkTitle.isSelected = TextUtils.isEmpty(link.url) || ReadPreference.hasRead(link.url)
                 linkSummary.text = link.summary
                 linkSummary.visibility = if (TextUtils.isEmpty(link.summary)) View.GONE else View.VISIBLE
-                linkItem.setOnClickListener {
-                    if (!TextUtils.isEmpty(link.url)) {
+                if (!TextUtils.isEmpty(link.url)) {
+                    linkItem.setOnClickListener {
                         BrowserActivity.start(context, link)
                         ReadPreference.read(link.url)
                         linkTitle.isSelected = true
@@ -86,6 +112,6 @@ class JobsFragment : BaseLazyFragment(), SwipeRefreshLayout.OnRefreshListener {
             linkGroupContainer!!.addView(group)
         }
 
-        tvQuote!!.text = jobs.quote
+        tvQuote!!.text = jobs!!.quote
     }
 }

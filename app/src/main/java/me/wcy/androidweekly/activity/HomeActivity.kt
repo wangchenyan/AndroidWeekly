@@ -2,7 +2,6 @@ package me.wcy.androidweekly.activity
 
 import android.os.Bundle
 import android.support.design.widget.NavigationView
-import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v4.view.ViewPager
 import android.support.v4.widget.DrawerLayout
@@ -10,6 +9,7 @@ import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import me.wcy.androidweekly.R
+import me.wcy.androidweekly.fragment.BaseNaviFragment
 import me.wcy.androidweekly.fragment.CollectionFragment
 import me.wcy.androidweekly.fragment.JobsFragment
 import me.wcy.androidweekly.fragment.WeeklyListFragment
@@ -27,6 +27,8 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     @Bind(R.id.view_pager)
     private val viewPager: ScrollableViewPager? = null
 
+    private val fragmentList = mutableListOf<BaseNaviFragment>()
+    private val navigationIndex = mutableListOf<Int>()
     private var fragmentAdapter: FragmentAdapter? = null
     private var menu: Menu? = null
 
@@ -48,7 +50,7 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         this.menu = menu
-        menuInflater.inflate(R.menu.menu_search, menu)
+        menuInflater.inflate(R.menu.menu_home, menu)
         return true
     }
 
@@ -58,15 +60,14 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 drawerLayout!!.openDrawer(GravityCompat.START)
                 return true
             }
-            R.id.action_search -> {
-                SearchActivity.start(this)
-            }
+        }
+        for (f in fragmentList) {
+            f.onOptionsItemSelected(item)
         }
         return super.onOptionsItemSelected(item)
     }
 
     private fun setupViewPager() {
-        val fragmentList = mutableListOf<Fragment>()
         val titleList = mutableListOf<String>()
         fragmentList.add(WeeklyListFragment.newInstance(WeeklyListFragment.TYPE_WEEKLY))
         fragmentList.add(CollectionFragment())
@@ -83,6 +84,10 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         viewPager.adapter = fragmentAdapter
         viewPager.addOnPageChangeListener(pageChangeListener)
         viewPager.setCurrentItem(0, false)
+
+        for (f in fragmentList) {
+            navigationIndex.add(f.navigationMenuId())
+        }
     }
 
     private val pageChangeListener = object : ViewPager.OnPageChangeListener {
@@ -94,38 +99,19 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         override fun onPageSelected(position: Int) {
             title = fragmentAdapter!!.getPageTitle(position)
-            menu!!.findItem(R.id.action_search).isVisible = position == 0
+            for (i in 0 until menu!!.size()) {
+                menu!!.getItem(i).isVisible = false
+            }
+            val fragment = fragmentList[position]
+            for (id in fragment.getMenuItemIds()) {
+                menu!!.findItem(id).isVisible = true
+            }
         }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         drawerLayout!!.closeDrawers()
-        when (item.itemId) {
-            R.id.action_weekly -> {
-                if (viewPager!!.currentItem != 0) {
-                    viewPager.setCurrentItem(0, false)
-                }
-                return true
-            }
-            R.id.action_collection -> {
-                if (viewPager!!.currentItem != 1) {
-                    viewPager.setCurrentItem(1, false)
-                }
-                return true
-            }
-            R.id.action_special -> {
-                if (viewPager!!.currentItem != 2) {
-                    viewPager.setCurrentItem(2, false)
-                }
-                return true
-            }
-            R.id.action_jobs -> {
-                if (viewPager!!.currentItem != 3) {
-                    viewPager.setCurrentItem(3, false)
-                }
-                return true
-            }
-        }
-        return false
+        viewPager!!.setCurrentItem(navigationIndex.indexOf(item.itemId), false)
+        return true
     }
 }

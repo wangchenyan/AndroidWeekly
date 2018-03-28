@@ -6,4 +6,10 @@
         android:icon="@drawable/ic_menu_search"
         android:title="搜索"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/action_publish"
+        android:icon="@drawable/ic_menu_upload"
+        android:title="发布招聘信息"
+        android:visible="false"
+        app:showAsAction="always" />
 </menu>

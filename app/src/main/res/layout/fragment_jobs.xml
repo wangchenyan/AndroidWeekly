@@ -25,7 +25,11 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="16dp"
-                android:layout_marginTop="16dp" />
+                android:layout_marginLeft="28dp"
+                android:layout_marginRight="28dp"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:textSize="12sp" />
         </LinearLayout>
     </ScrollView>
 </android.support.v4.widget.SwipeRefreshLayout>

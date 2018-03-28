@@ -3,8 +3,10 @@ package me.wcy.androidweekly.fragment
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
+import android.view.MenuItem
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView
 import me.wcy.androidweekly.R
+import me.wcy.androidweekly.activity.SearchActivity
 import me.wcy.androidweekly.api.Api
 import me.wcy.androidweekly.api.SafeObserver
 import me.wcy.androidweekly.constants.Extras
@@ -20,7 +22,7 @@ import me.wcy.androidweekly.widget.radapter.RSingleDelegate
 /**
  * Created by hzwangchenyan on 2018/3/13.
  */
-class WeeklyListFragment : BaseLazyFragment(), SwipeRefreshLayout.OnRefreshListener, SwipeMenuRecyclerView.LoadMoreListener {
+class WeeklyListFragment : BaseNaviFragment(), SwipeRefreshLayout.OnRefreshListener, SwipeMenuRecyclerView.LoadMoreListener {
     @Bind(R.id.refresh_layout)
     private val refreshLayout: SwipeRefreshLayout? = null
     @Bind(R.id.rv_weekly)
@@ -70,8 +72,26 @@ class WeeklyListFragment : BaseLazyFragment(), SwipeRefreshLayout.OnRefreshListe
         getWeekly(page)
     }
 
-    override val layoutResId: Int
-        get() = R.layout.fragment_weekly_list
+    override fun layoutResId(): Int {
+        return R.layout.fragment_weekly_list
+    }
+
+    override fun navigationMenuId(): Int {
+        return R.id.action_weekly
+    }
+
+    override fun getMenuItemIds(): Array<Int> {
+        return arrayOf(R.id.action_search)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item!!.itemId) {
+            R.id.action_search -> {
+                SearchActivity.start(context)
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
 
     override fun onRefresh() {
         page = 1

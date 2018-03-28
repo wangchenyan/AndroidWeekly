@@ -24,8 +24,9 @@ class CollectLinkFragment : BaseLazyFragment() {
     private val linkList = mutableListOf<Link>()
     private val adapter = RAdapter(linkList, RSingleDelegate(LinkViewHolder::class.java))
 
-    override val layoutResId: Int
-        get() = R.layout.fragment_collect_link
+    override fun layoutResId(): Int {
+        return R.layout.fragment_collect_link
+    }
 
     override fun onLazyCreate() {
         rvCollectLink!!.layoutManager = LinearLayoutManager(context)

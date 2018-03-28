@@ -23,7 +23,7 @@ abstract class BaseLazyFragment : Fragment() {
         private const val TAG = "Fragment"
     }
 
-    protected abstract val layoutResId: Int
+    protected abstract fun layoutResId(): Int
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater!!.inflate(R.layout.fragment_lazy, container, false)
@@ -58,7 +58,7 @@ abstract class BaseLazyFragment : Fragment() {
         }
 
         val rootView = view as LinearLayout?
-        val view = LayoutInflater.from(context).inflate(layoutResId, rootView, false)
+        val view = LayoutInflater.from(context).inflate(layoutResId(), rootView, false)
         rootView!!.addView(view)
         ViewBinder.bind(this, rootView)
         Log.d(TAG, javaClass.simpleName + " onLazyCreate")

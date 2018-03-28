@@ -24,8 +24,9 @@ class CollectWeeklyFragment : BaseLazyFragment() {
     private val weeklyList = mutableListOf<Weekly>()
     private val adapter: RAdapter<Weekly> = RAdapter(weeklyList, RSingleDelegate(WeeklyViewHolder::class.java))
 
-    override val layoutResId: Int
-        get() = R.layout.fragment_collect_weekly
+    override fun layoutResId(): Int {
+        return R.layout.fragment_collect_weekly
+    }
 
     override fun onLazyCreate() {
         rvCollectWeekly!!.layoutManager = LinearLayoutManager(context)
