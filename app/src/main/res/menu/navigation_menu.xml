@@ -10,15 +10,17 @@
             android:id="@+id/action_collection"
             android:icon="@drawable/ic_menu_collection"
             android:title="收藏" />
-
         <item
             android:id="@+id/action_special"
             android:icon="@drawable/ic_menu_special"
             android:title="特刊" />
-
         <item
             android:id="@+id/action_jobs"
-            android:icon="@drawable/ic_menu_special"
+            android:icon="@drawable/ic_menu_job"
             android:title="酷工作" />
+        <item
+            android:id="@+id/action_contribute"
+            android:icon="@drawable/ic_menu_upload"
+            android:title="投稿" />
     </group>
 </menu>
