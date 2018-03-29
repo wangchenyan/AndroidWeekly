@@ -145,7 +145,7 @@ class BrowserActivity : BaseActivity() {
             R.id.action_share -> {
                 val intent = Intent(Intent.ACTION_SEND)
                 intent.type = "text/plain"
-                intent.putExtra(Intent.EXTRA_TEXT, web_view.title.plus("\n").plus(web_view.url))
+                intent.putExtra(Intent.EXTRA_TEXT, "${web_view.title}\n${web_view.url}")
                 startActivity(Intent.createChooser(intent, "分享"))
             }
         }

@@ -49,7 +49,7 @@ class WeeklyListConverter : Converter<List<Weekly>> {
             val tagElements = content.getElementsByClass("tag-list")[0].getElementsByTag("a")
             var tags = ""
             tagElements.forEach {
-                tags = tags.plus(it.text()).plus(",")
+                tags = "$tags${it.text()},"
             }
             if (tags.isNotEmpty()) {
                 tags = tags.dropLast(1)
