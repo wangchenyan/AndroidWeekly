@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import com.hwangjr.rxbus.RxBus
 import me.wcy.androidweekly.R
-import me.wcy.androidweekly.utils.binding.ViewBinder
 
 /**
  * Created by wcy on 2017/11/25.
@@ -60,7 +59,6 @@ abstract class BaseLazyFragment : Fragment() {
         val rootView = view as LinearLayout?
         val view = LayoutInflater.from(context).inflate(layoutResId(), rootView, false)
         rootView!!.addView(view)
-        ViewBinder.bind(this, rootView)
         Log.d(TAG, javaClass.simpleName + " onLazyCreate")
         onLazyCreate()
         isLazyCreate = true

@@ -12,7 +12,6 @@ import android.view.View
 import android.widget.LinearLayout
 import com.hwangjr.rxbus.RxBus
 import me.wcy.androidweekly.R
-import me.wcy.androidweekly.utils.binding.ViewBinder
 
 /**
  * Created by hzwangchenyan on 2018/3/13.
@@ -33,7 +32,6 @@ abstract class BaseActivity : AppCompatActivity() {
 
     override fun setContentView(view: View?) {
         super.setContentView(realContent(view!!))
-        ViewBinder.bind(this)
     }
 
     private fun realContent(view: View): View {
