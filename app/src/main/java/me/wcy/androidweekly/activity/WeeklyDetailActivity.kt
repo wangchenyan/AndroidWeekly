@@ -157,7 +157,7 @@ class WeeklyDetailActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListene
                 linkSummary.text = link.summary
                 linkSummary.visibility = if (TextUtils.isEmpty(link.summary)) GONE else VISIBLE
                 linkItem.setOnClickListener {
-                    BrowserActivity.start(this, link)
+                    BrowserActivity.start(this, link.url)
                     ReadPreference.read(link.url)
                     linkTitle.isSelected = true
                 }

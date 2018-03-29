@@ -43,7 +43,7 @@ class CollectLinkFragment : BaseLazyFragment() {
 
     @Suppress("unused")
     @Subscribe(tags = [(Tag(RxBusTags.LINK_COLLECTION))])
-    fun onCollect(link: Link) {
+    fun onCollect(url: String) {
         showList()
     }
 }

@@ -1,7 +1,6 @@
 package me.wcy.androidweekly.storage.db
 
 import android.content.Context
-import me.wcy.androidweekly.model.Link
 import me.wcy.androidweekly.model.Weekly
 import me.wcy.androidweekly.storage.db.greendao.DaoMaster
 import me.wcy.androidweekly.storage.db.greendao.DaoSession
@@ -45,10 +44,10 @@ class DBManager private constructor() {
         return entity != null
     }
 
-    fun hasCollect(link: Link): Boolean {
+    fun hasCollect(url: String): Boolean {
         val entity = linkDao!!
                 .queryBuilder()
-                .where(LinkDao.Properties.Url.eq(link.url))
+                .where(LinkDao.Properties.Url.eq(url))
                 .unique()
         return entity != null
     }

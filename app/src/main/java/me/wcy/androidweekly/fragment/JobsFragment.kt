@@ -12,7 +12,6 @@ import me.wcy.androidweekly.activity.BrowserActivity
 import me.wcy.androidweekly.api.Api
 import me.wcy.androidweekly.api.SafeObserver
 import me.wcy.androidweekly.model.Jobs
-import me.wcy.androidweekly.model.Link
 import me.wcy.androidweekly.storage.sp.ReadPreference
 import me.wcy.androidweekly.utils.ToastUtils
 import me.wcy.androidweekly.utils.binding.Bind
@@ -53,10 +52,8 @@ class JobsFragment : BaseNaviFragment(), SwipeRefreshLayout.OnRefreshListener {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item!!.itemId) {
             R.id.action_publish -> {
-                val link = Link()
-                link.url = jobs!!.publishUrl
-                link.title = "发布招聘信息"
-                BrowserActivity.start(context, link)
+                val url = jobs!!.publishUrl
+                BrowserActivity.start(context, url!!)
             }
         }
         return super.onOptionsItemSelected(item)
@@ -101,7 +98,7 @@ class JobsFragment : BaseNaviFragment(), SwipeRefreshLayout.OnRefreshListener {
                 linkSummary.visibility = if (TextUtils.isEmpty(link.summary)) View.GONE else View.VISIBLE
                 if (!TextUtils.isEmpty(link.url)) {
                     linkItem.setOnClickListener {
-                        BrowserActivity.start(context, link)
+                        BrowserActivity.start(context, link.url)
                         ReadPreference.read(link.url)
                         linkTitle.isSelected = true
                     }

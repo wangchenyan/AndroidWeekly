@@ -13,7 +13,6 @@ import me.wcy.androidweekly.fragment.BaseNaviFragment
 import me.wcy.androidweekly.fragment.CollectionFragment
 import me.wcy.androidweekly.fragment.JobsFragment
 import me.wcy.androidweekly.fragment.WeeklyListFragment
-import me.wcy.androidweekly.model.Link
 import me.wcy.androidweekly.utils.binding.Bind
 import me.wcy.androidweekly.widget.pager.FragmentAdapter
 import me.wcy.androidweekly.widget.pager.ScrollableViewPager
@@ -112,14 +111,22 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         drawerLayout!!.closeDrawers()
-        if (item.itemId == R.id.action_contribute) {
-            val link = Link()
-            link.url = "https://gdgdocs.org/r/A8lDj5"
-            link.title = "投稿"
-            BrowserActivity.start(this, link)
+        val index = navigationIndex.indexOf(item.itemId)
+        if (index >= 0) {
+            viewPager!!.setCurrentItem(index, false)
             return true
         }
-        viewPager!!.setCurrentItem(navigationIndex.indexOf(item.itemId), false)
-        return true
+        when (item.itemId) {
+            R.id.action_contribute -> {
+                val url = "https://gdgdocs.org/r/A8lDj5"
+                BrowserActivity.start(this, url)
+                return true
+            }
+            R.id.action_setting -> {
+                SettingActivity.start(this)
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

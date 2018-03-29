@@ -27,7 +27,7 @@ class LinkViewHolder(item: View) : RViewHolder<Link>(item) {
         linkSummary!!.text = data!!.summary
         linkSummary.visibility = if (TextUtils.isEmpty(data!!.summary)) View.GONE else View.VISIBLE
         item.setOnClickListener {
-            BrowserActivity.start(context, data!!)
+            BrowserActivity.start(context, data!!.url)
             ReadPreference.read(data!!.url)
             linkTitle.isSelected = true
         }

@@ -31,12 +31,12 @@ class BrowserActivity : BaseActivity() {
     @Bind(R.id.progress_bar)
     private val progressBar: ProgressBar? = null
 
-    private var link: Link? = null
+    private var collectMenu: MenuItem? = null
 
     companion object {
-        fun start(context: Context, link: Link) {
+        fun start(context: Context, url: String) {
             val intent = Intent(context, BrowserActivity::class.java)
-            intent.putExtra(Extras.LINK, link)
+            intent.putExtra(Extras.URL, url)
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
             context.startActivity(intent)
         }
@@ -48,9 +48,7 @@ class BrowserActivity : BaseActivity() {
         setContentView(R.layout.activity_browser)
         window.setFormat(PixelFormat.TRANSLUCENT)
 
-        link = intent.getSerializableExtra(Extras.LINK) as Link
-
-        title = link!!.title
+        val url = intent.getStringExtra(Extras.URL)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_menu_close)
 
         val webSetting = webView!!.settings
@@ -75,17 +73,22 @@ class BrowserActivity : BaseActivity() {
 
         webView.webViewClient = webViewClient
         webView.webChromeClient = webChromeClient
-        webView.loadUrl(link!!.url)
+        webView.loadUrl(url)
     }
 
     private val webViewClient = object : WebViewClient() {
         override fun shouldOverrideUrlLoading(p0: WebView?, p1: String?): Boolean {
             p0!!.loadUrl(p1)
+            updateCollectMenuItem(p1!!)
             return true
         }
     }
 
     private val webChromeClient = object : WebChromeClient() {
+        override fun onReceivedTitle(p0: WebView?, p1: String?) {
+            title = p1
+        }
+
         override fun onProgressChanged(p0: WebView?, p1: Int) {
             super.onProgressChanged(p0, p1)
             progressBar!!.progress = p1
@@ -95,9 +98,8 @@ class BrowserActivity : BaseActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_collect, menu)
-        val collectItem = menu!!.findItem(R.id.action_collect)
-        val collection = DBManager.get().getLinkEntityDao()!!.queryBuilder().where(LinkDao.Properties.Url.eq(link!!.url)).unique()
-        setCollectMenuItem(collectItem, collection != null)
+        collectMenu = menu!!.findItem(R.id.action_collect)
+        updateCollectMenuItem(webView!!.url!!)
         return true
     }
 
@@ -117,24 +119,28 @@ class BrowserActivity : BaseActivity() {
             }
             R.id.action_collect -> {
                 val collected: Boolean
-                if (!DBManager.get().hasCollect(link!!)) {
+                if (!DBManager.get().hasCollect(webView!!.url!!)) {
                     collected = true
+                    val link = Link()
+                    link.url = webView.url
+                    link.title = webView.title
+                    link.time = System.currentTimeMillis()
                     DBManager.get().getLinkEntityDao()!!.insert(link)
                 } else {
                     collected = false
-                    val entity = DBManager.get().getLinkEntityDao()!!.queryBuilder().where(LinkDao.Properties.Url.eq(link!!.url)).build().unique()
+                    val entity = DBManager.get().getLinkEntityDao()!!.queryBuilder().where(LinkDao.Properties.Url.eq(webView.url)).build().unique()
                     if (entity != null) {
                         DBManager.get().getLinkEntityDao()!!.delete(entity)
                     }
                 }
-                RxBus.get().post(RxBusTags.LINK_COLLECTION, link)
-                setCollectMenuItem(item, collected)
+                RxBus.get().post(RxBusTags.LINK_COLLECTION, webView.url)
+                updateCollectMenuItem(collected)
                 ToastUtils.show(if (collected) "已收藏" else "已取消收藏")
                 return true
             }
             R.id.action_open_in_browser -> {
                 try {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(link!!.url))
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(webView!!.url))
                     startActivity(intent)
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -145,16 +151,21 @@ class BrowserActivity : BaseActivity() {
             R.id.action_share -> {
                 val intent = Intent(Intent.ACTION_SEND)
                 intent.type = "text/plain"
-                intent.putExtra(Intent.EXTRA_TEXT, link!!.title.plus("\n").plus(link!!.url))
+                intent.putExtra(Intent.EXTRA_TEXT, webView!!.title.plus("\n").plus(webView.url))
                 startActivity(Intent.createChooser(intent, "分享"))
             }
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun setCollectMenuItem(item: MenuItem, collected: Boolean) {
-        item.title = if (collected) "已收藏" else "收藏"
-        item.setIcon(if (collected) R.drawable.ic_menu_star_selected else R.drawable.ic_menu_star)
+    private fun updateCollectMenuItem(url: String) {
+        val collection = DBManager.get().getLinkEntityDao()!!.queryBuilder().where(LinkDao.Properties.Url.eq(url)).unique()
+        updateCollectMenuItem(collection != null)
+    }
+
+    private fun updateCollectMenuItem(collected: Boolean) {
+        collectMenu!!.title = if (collected) "已收藏" else "收藏"
+        collectMenu!!.setIcon(if (collected) R.drawable.ic_menu_star_selected else R.drawable.ic_menu_star)
     }
 
     override fun onBackPressed() {

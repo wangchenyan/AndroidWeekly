@@ -31,9 +31,15 @@
         <activity
             android:name=".activity.BrowserActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label=""
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity android:name=".activity.SearchActivity"></activity>
+        <activity
+            android:name=".activity.SearchActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.SettingActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

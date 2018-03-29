@@ -12,6 +12,7 @@ import me.wcy.androidweekly.api.SafeObserver
 import me.wcy.androidweekly.constants.Extras
 import me.wcy.androidweekly.model.Weekly
 import me.wcy.androidweekly.storage.cache.WeeklyCache
+import me.wcy.androidweekly.storage.sp.AppPreference
 import me.wcy.androidweekly.utils.ListUtils
 import me.wcy.androidweekly.utils.ToastUtils
 import me.wcy.androidweekly.utils.binding.Bind
@@ -43,6 +44,7 @@ class WeeklyListFragment : BaseNaviFragment(), SwipeRefreshLayout.OnRefreshListe
             bundle.putInt(Extras.TYPE, type)
             val fragment = WeeklyListFragment()
             fragment.arguments = bundle
+            fragment.type = type
             return fragment
         }
     }
@@ -56,9 +58,6 @@ class WeeklyListFragment : BaseNaviFragment(), SwipeRefreshLayout.OnRefreshListe
         rvWeekly.adapter = adapter
 
         refreshLayout!!.setOnRefreshListener(this)
-        rvWeekly.post {
-            refreshLayout.isRefreshing = true
-        }
 
         if (type == TYPE_WEEKLY) {
             val history = WeeklyCache.get().get(context)
@@ -67,9 +66,14 @@ class WeeklyListFragment : BaseNaviFragment(), SwipeRefreshLayout.OnRefreshListe
                 adapter.notifyDataSetChanged()
                 rvWeekly.loadMoreFinish(false, true)
             }
+            if (ListUtils.isEmpty(history) || AppPreference.isAutoRefresh()) {
+                getWeekly(page)
+                rvWeekly.post { refreshLayout.isRefreshing = true }
+            }
+        } else {
+            getWeekly(page)
+            rvWeekly.post { refreshLayout.isRefreshing = true }
         }
-
-        getWeekly(page)
     }
 
     override fun layoutResId(): Int {
@@ -77,7 +81,7 @@ class WeeklyListFragment : BaseNaviFragment(), SwipeRefreshLayout.OnRefreshListe
     }
 
     override fun navigationMenuId(): Int {
-        return R.id.action_weekly
+        return if (type == TYPE_WEEKLY) R.id.action_weekly else R.id.action_special
     }
 
     override fun getMenuItemIds(): Array<Int> {
