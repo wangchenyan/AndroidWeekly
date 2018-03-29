@@ -10,12 +10,12 @@ import android.support.v7.view.menu.MenuBuilder
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ProgressBar
 import com.hwangjr.rxbus.RxBus
 import com.tencent.smtt.sdk.WebChromeClient
 import com.tencent.smtt.sdk.WebSettings
 import com.tencent.smtt.sdk.WebView
 import com.tencent.smtt.sdk.WebViewClient
+import kotlinx.android.synthetic.main.activity_browser.*
 import me.wcy.androidweekly.R
 import me.wcy.androidweekly.constants.Extras
 import me.wcy.androidweekly.constants.RxBusTags
@@ -23,14 +23,8 @@ import me.wcy.androidweekly.model.Link
 import me.wcy.androidweekly.storage.db.DBManager
 import me.wcy.androidweekly.storage.db.greendao.LinkDao
 import me.wcy.androidweekly.utils.ToastUtils
-import me.wcy.androidweekly.utils.binding.Bind
 
 class BrowserActivity : BaseActivity() {
-    @Bind(R.id.web_view)
-    private val webView: WebView? = null
-    @Bind(R.id.progress_bar)
-    private val progressBar: ProgressBar? = null
-
     private var collectMenu: MenuItem? = null
 
     companion object {
@@ -51,7 +45,7 @@ class BrowserActivity : BaseActivity() {
         val url = intent.getStringExtra(Extras.URL)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_menu_close)
 
-        val webSetting = webView!!.settings
+        val webSetting = web_view.settings
         webSetting.allowFileAccess = true
         webSetting.layoutAlgorithm = WebSettings.LayoutAlgorithm.NARROW_COLUMNS
         webSetting.setSupportZoom(true)
@@ -71,9 +65,9 @@ class BrowserActivity : BaseActivity() {
         webSetting.pluginState = WebSettings.PluginState.ON_DEMAND
         webSetting.setRenderPriority(WebSettings.RenderPriority.HIGH)
 
-        webView.webViewClient = webViewClient
-        webView.webChromeClient = webChromeClient
-        webView.loadUrl(url)
+        web_view.webViewClient = webViewClient
+        web_view.webChromeClient = webChromeClient
+        web_view.loadUrl(url)
     }
 
     private val webViewClient = object : WebViewClient() {
@@ -91,15 +85,15 @@ class BrowserActivity : BaseActivity() {
 
         override fun onProgressChanged(p0: WebView?, p1: Int) {
             super.onProgressChanged(p0, p1)
-            progressBar!!.progress = p1
-            progressBar.visibility = if (p1 == 100) View.GONE else View.VISIBLE
+            progress_bar.progress = p1
+            progress_bar.visibility = if (p1 == 100) View.GONE else View.VISIBLE
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_collect, menu)
         collectMenu = menu!!.findItem(R.id.action_collect)
-        updateCollectMenuItem(webView!!.url!!)
+        updateCollectMenuItem(web_view.url!!)
         return true
     }
 
@@ -119,28 +113,28 @@ class BrowserActivity : BaseActivity() {
             }
             R.id.action_collect -> {
                 val collected: Boolean
-                if (!DBManager.get().hasCollect(webView!!.url!!)) {
+                if (!DBManager.get().hasCollect(web_view.url!!)) {
                     collected = true
                     val link = Link()
-                    link.url = webView.url
-                    link.title = webView.title
+                    link.url = web_view.url
+                    link.title = web_view.title
                     link.time = System.currentTimeMillis()
                     DBManager.get().getLinkEntityDao()!!.insert(link)
                 } else {
                     collected = false
-                    val entity = DBManager.get().getLinkEntityDao()!!.queryBuilder().where(LinkDao.Properties.Url.eq(webView.url)).build().unique()
+                    val entity = DBManager.get().getLinkEntityDao()!!.queryBuilder().where(LinkDao.Properties.Url.eq(web_view.url)).build().unique()
                     if (entity != null) {
                         DBManager.get().getLinkEntityDao()!!.delete(entity)
                     }
                 }
-                RxBus.get().post(RxBusTags.LINK_COLLECTION, webView.url)
+                RxBus.get().post(RxBusTags.LINK_COLLECTION, web_view.url)
                 updateCollectMenuItem(collected)
                 ToastUtils.show(if (collected) "已收藏" else "已取消收藏")
                 return true
             }
             R.id.action_open_in_browser -> {
                 try {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(webView!!.url))
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(web_view.url))
                     startActivity(intent)
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -151,7 +145,7 @@ class BrowserActivity : BaseActivity() {
             R.id.action_share -> {
                 val intent = Intent(Intent.ACTION_SEND)
                 intent.type = "text/plain"
-                intent.putExtra(Intent.EXTRA_TEXT, webView!!.title.plus("\n").plus(webView.url))
+                intent.putExtra(Intent.EXTRA_TEXT, web_view.title.plus("\n").plus(web_view.url))
                 startActivity(Intent.createChooser(intent, "分享"))
             }
         }
@@ -169,8 +163,8 @@ class BrowserActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        if (webView!!.canGoBack()) {
-            webView.goBack()
+        if (web_view.canGoBack()) {
+            web_view.goBack()
         } else {
             super.onBackPressed()
         }

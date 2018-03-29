@@ -4,29 +4,19 @@ import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v4.view.ViewPager
-import android.support.v4.widget.DrawerLayout
-import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
+import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.activity_home_include.*
+import kotlinx.android.synthetic.main.include_app_bar.*
 import me.wcy.androidweekly.R
 import me.wcy.androidweekly.fragment.BaseNaviFragment
 import me.wcy.androidweekly.fragment.CollectionFragment
 import me.wcy.androidweekly.fragment.JobsFragment
 import me.wcy.androidweekly.fragment.WeeklyListFragment
-import me.wcy.androidweekly.utils.binding.Bind
 import me.wcy.androidweekly.widget.pager.FragmentAdapter
-import me.wcy.androidweekly.widget.pager.ScrollableViewPager
 
 class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
-    @Bind(R.id.drawer_layout)
-    private val drawerLayout: DrawerLayout? = null
-    @Bind(R.id.navigation_view)
-    private val navigationView: NavigationView? = null
-    @Bind(R.id.toolbar)
-    private val toolbar: Toolbar? = null
-    @Bind(R.id.view_pager)
-    private val viewPager: ScrollableViewPager? = null
-
     private val fragmentList = mutableListOf<BaseNaviFragment>()
     private val navigationIndex = mutableListOf<Int>()
     private var fragmentAdapter: FragmentAdapter? = null
@@ -39,7 +29,7 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_menu_menu)
-        navigationView!!.setNavigationItemSelectedListener(this)
+        navigation_view.setNavigationItemSelectedListener(this)
         title = "Android 开发技术周报"
         setupViewPager()
     }
@@ -57,7 +47,7 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item!!.itemId) {
             android.R.id.home -> {
-                drawerLayout!!.openDrawer(GravityCompat.START)
+                drawer_layout.openDrawer(GravityCompat.START)
                 return true
             }
         }
@@ -79,11 +69,11 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         titleList.add("酷工作")
         fragmentAdapter = FragmentAdapter(supportFragmentManager, fragmentList)
         fragmentAdapter!!.setTitleList(titleList)
-        viewPager!!.setScrollable(false)
-        viewPager.offscreenPageLimit = fragmentList.size
-        viewPager.adapter = fragmentAdapter
-        viewPager.addOnPageChangeListener(pageChangeListener)
-        viewPager.setCurrentItem(0, false)
+        view_pager.setScrollable(false)
+        view_pager.offscreenPageLimit = fragmentList.size
+        view_pager.adapter = fragmentAdapter
+        view_pager.addOnPageChangeListener(pageChangeListener)
+        view_pager.setCurrentItem(0, false)
 
         for (f in fragmentList) {
             navigationIndex.add(f.navigationMenuId())
@@ -110,10 +100,10 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        drawerLayout!!.closeDrawers()
+        drawer_layout.closeDrawers()
         val index = navigationIndex.indexOf(item.itemId)
         if (index >= 0) {
-            viewPager!!.setCurrentItem(index, false)
+            view_pager.setCurrentItem(index, false)
             return true
         }
         when (item.itemId) {

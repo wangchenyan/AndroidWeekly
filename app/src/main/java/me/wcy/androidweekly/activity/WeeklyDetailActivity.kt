@@ -17,6 +17,7 @@ import android.view.View.VISIBLE
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.hwangjr.rxbus.RxBus
+import kotlinx.android.synthetic.main.activity_weekly_detail.*
 import me.wcy.androidweekly.R
 import me.wcy.androidweekly.api.Api
 import me.wcy.androidweekly.api.SafeObserver
@@ -28,14 +29,8 @@ import me.wcy.androidweekly.storage.db.DBManager
 import me.wcy.androidweekly.storage.db.greendao.WeeklyDao
 import me.wcy.androidweekly.storage.sp.ReadPreference
 import me.wcy.androidweekly.utils.ToastUtils
-import me.wcy.androidweekly.utils.binding.Bind
 
 class WeeklyDetailActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
-    @Bind(R.id.refresh_layout)
-    private val refreshLayout: SwipeRefreshLayout? = null
-    @Bind(R.id.link_group_container)
-    private val linkGroupContainer: LinearLayout? = null
-
     private var weekly: Weekly? = null
 
     companion object {
@@ -53,10 +48,8 @@ class WeeklyDetailActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListene
         weekly = intent.getSerializableExtra(Extras.WEEKLY) as Weekly?
 
         title = weekly!!.title
-        refreshLayout!!.setOnRefreshListener(this)
-        refreshLayout.post {
-            refreshLayout.isRefreshing = true
-        }
+        refresh_layout.setOnRefreshListener(this)
+        refresh_layout.post { refresh_layout.isRefreshing = true }
         getWeeklyDetail()
     }
 
@@ -128,11 +121,9 @@ class WeeklyDetailActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListene
         Api.get().getWeeklyDetail(weekly!!.url!!)
                 .subscribe(object : SafeObserver<WeeklyDetail>(this as Activity) {
                     override fun onResult(t: WeeklyDetail?, e: Throwable?) {
-                        refreshLayout!!.post {
-                            refreshLayout.isRefreshing = false
-                        }
+                        refresh_layout.post { refresh_layout.isRefreshing = false }
                         if (e == null) {
-                            refreshLayout.isEnabled = false
+                            refresh_layout.isEnabled = false
                             showWeeklyDetail(t!!)
                         } else {
                             ToastUtils.show("加载失败，请下拉刷新")
@@ -143,7 +134,7 @@ class WeeklyDetailActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListene
 
     private fun showWeeklyDetail(weeklyDetail: WeeklyDetail) {
         weeklyDetail.groupList!!.forEach { linkGroup ->
-            val group = LayoutInflater.from(this).inflate(R.layout.link_group, linkGroupContainer, false)
+            val group = LayoutInflater.from(this).inflate(R.layout.link_group, link_group_container, false)
             val linkContainer = group.findViewById<LinearLayout>(R.id.link_container)
             val groupTitle = group.findViewById<TextView>(R.id.tv_group_title)
             groupTitle.text = linkGroup.title
@@ -164,7 +155,7 @@ class WeeklyDetailActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListene
                 linkContainer.addView(linkItem)
                 index++
             }
-            linkGroupContainer!!.addView(group)
+            link_group_container.addView(group)
         }
     }
 

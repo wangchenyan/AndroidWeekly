@@ -4,29 +4,22 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.text.TextUtils
 import android.view.Menu
 import android.view.View
 import android.widget.ImageView
-import android.widget.TextView
+import kotlinx.android.synthetic.main.activity_search.*
 import me.wcy.androidweekly.R
 import me.wcy.androidweekly.api.Api
 import me.wcy.androidweekly.api.SafeObserver
 import me.wcy.androidweekly.model.Weekly
 import me.wcy.androidweekly.utils.ListUtils
-import me.wcy.androidweekly.utils.binding.Bind
 import me.wcy.androidweekly.viewholder.WeeklyViewHolder
 import me.wcy.androidweekly.widget.radapter.RAdapter
 import me.wcy.androidweekly.widget.radapter.RSingleDelegate
 
 class SearchActivity : BaseActivity(), SearchView.OnQueryTextListener {
-    @Bind(R.id.tv_label)
-    private val tvLabel: TextView? = null
-    @Bind(R.id.rv_weekly)
-    private val rvWeekly: RecyclerView? = null
-
     private val weeklyList = mutableListOf<Weekly>()
     private val adapter = RAdapter(weeklyList, RSingleDelegate(WeeklyViewHolder::class.java))
 
@@ -41,8 +34,8 @@ class SearchActivity : BaseActivity(), SearchView.OnQueryTextListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        rvWeekly!!.layoutManager = LinearLayoutManager(this)
-        rvWeekly.adapter = adapter
+        rv_weekly.layoutManager = LinearLayoutManager(this)
+        rv_weekly.adapter = adapter
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -78,28 +71,28 @@ class SearchActivity : BaseActivity(), SearchView.OnQueryTextListener {
     }
 
     private fun search(keyword: String) {
-        tvLabel!!.visibility = View.VISIBLE
-        rvWeekly!!.visibility = View.GONE
-        tvLabel.text = "正在搜索…"
-        rvWeekly.tag = keyword
+        tv_label.visibility = View.VISIBLE
+        rv_weekly.visibility = View.GONE
+        tv_label.text = "正在搜索…"
+        rv_weekly.tag = keyword
         Api.get().search(keyword)
                 .subscribe(object : SafeObserver<MutableList<Weekly>>(this) {
                     override fun onResult(t: MutableList<Weekly>?, e: Throwable?) {
-                        if (keyword != rvWeekly.tag) {
+                        if (keyword != rv_weekly.tag) {
                             return
                         }
                         if (e == null) {
                             if (!ListUtils.isEmpty(t)) {
-                                tvLabel.visibility = View.GONE
-                                rvWeekly.visibility = View.VISIBLE
+                                tv_label.visibility = View.GONE
+                                rv_weekly.visibility = View.VISIBLE
                                 weeklyList.clear()
                                 weeklyList.addAll(t!!)
                                 adapter.notifyDataSetChanged()
                             } else {
-                                tvLabel.text = "搜索结果为空"
+                                tv_label.text = "搜索结果为空"
                             }
                         } else {
-                            tvLabel.text = "搜索失败，请稍后再试"
+                            tv_label.text = "搜索失败，请稍后再试"
                         }
                     }
                 })

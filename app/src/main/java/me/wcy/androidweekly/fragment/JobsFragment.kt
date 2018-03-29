@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
+import kotlinx.android.synthetic.main.fragment_jobs.*
 import me.wcy.androidweekly.R
 import me.wcy.androidweekly.activity.BrowserActivity
 import me.wcy.androidweekly.api.Api
@@ -14,19 +15,11 @@ import me.wcy.androidweekly.api.SafeObserver
 import me.wcy.androidweekly.model.Jobs
 import me.wcy.androidweekly.storage.sp.ReadPreference
 import me.wcy.androidweekly.utils.ToastUtils
-import me.wcy.androidweekly.utils.binding.Bind
 
 /**
  * Created by hzwangchenyan on 2018/3/26.
  */
 class JobsFragment : BaseNaviFragment(), SwipeRefreshLayout.OnRefreshListener {
-    @Bind(R.id.refresh_layout)
-    private val refreshLayout: SwipeRefreshLayout? = null
-    @Bind(R.id.link_group_container)
-    private val linkGroupContainer: LinearLayout? = null
-    @Bind(R.id.tv_quote)
-    private val tvQuote: TextView? = null
-
     private var jobs: Jobs? = null
 
     override fun layoutResId(): Int {
@@ -42,10 +35,8 @@ class JobsFragment : BaseNaviFragment(), SwipeRefreshLayout.OnRefreshListener {
     }
 
     override fun onLazyCreate() {
-        refreshLayout!!.setOnRefreshListener(this)
-        refreshLayout.post {
-            refreshLayout.isRefreshing = true
-        }
+        refresh_layout.setOnRefreshListener(this)
+        refresh_layout.post { refresh_layout.isRefreshing = true }
         getJobs()
     }
 
@@ -67,11 +58,9 @@ class JobsFragment : BaseNaviFragment(), SwipeRefreshLayout.OnRefreshListener {
         Api.get().getJobs()
                 .subscribe(object : SafeObserver<Jobs>(this) {
                     override fun onResult(t: Jobs?, e: Throwable?) {
-                        refreshLayout!!.post {
-                            refreshLayout.isRefreshing = false
-                        }
+                        refresh_layout.post { refresh_layout.isRefreshing = false }
                         if (e == null) {
-                            refreshLayout.isEnabled = false
+                            refresh_layout.isEnabled = false
                             jobs = t
                             showJobs()
                         } else {
@@ -83,7 +72,7 @@ class JobsFragment : BaseNaviFragment(), SwipeRefreshLayout.OnRefreshListener {
 
     private fun showJobs() {
         jobs!!.groupList!!.forEach { linkGroup ->
-            val group = LayoutInflater.from(context).inflate(R.layout.link_group, linkGroupContainer, false)
+            val group = LayoutInflater.from(context).inflate(R.layout.link_group, link_group_container, false)
             val linkContainer = group.findViewById<LinearLayout>(R.id.link_container)
             val groupTitle = group.findViewById<TextView>(R.id.tv_group_title)
             groupTitle.text = linkGroup.title
@@ -106,9 +95,9 @@ class JobsFragment : BaseNaviFragment(), SwipeRefreshLayout.OnRefreshListener {
                 linkContainer.addView(linkItem)
                 index++
             }
-            linkGroupContainer!!.addView(group)
+            link_group_container.addView(group)
         }
 
-        tvQuote!!.text = jobs!!.quote
+        tv_quote.text = jobs!!.quote
     }
 }
