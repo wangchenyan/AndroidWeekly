@@ -46,7 +46,7 @@ class VersionManager {
 
     private fun compareVersion(context: Context, version: Version) {
         if (version.code!!.toInt() > BuildConfig.VERSION_CODE) {
-            val message = "${version.name}(${b2mb(version.size!!)}MB)\n\n${version.desc}"
+            val message = "v${version.name}(${b2mb(version.size!!)}MB)\n\n${version.desc}"
             AlertDialog.Builder(context)
                     .setTitle("发现新版本")
                     .setMessage(message)

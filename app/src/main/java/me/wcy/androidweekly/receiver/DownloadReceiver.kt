@@ -5,6 +5,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
+import android.support.v4.content.FileProvider
 import me.wcy.androidweekly.utils.ToastUtils
 import java.io.File
 
@@ -55,11 +57,20 @@ class DownloadReceiver : BroadcastReceiver() {
     }
 
     private fun install(context: Context, file: File) {
-        val uri = Uri.fromFile(file)
+        val uri = getUriForFile(context, file)
         val intent = Intent(Intent.ACTION_VIEW)
         intent.setDataAndType(uri, "application/vnd.android.package-archive")
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         context.startActivity(intent)
+    }
+
+    private fun getUriForFile(context: Context, file: File): Uri {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            val authority = context.packageName + ".fileprovider"
+            FileProvider.getUriForFile(context, authority, file)
+        } else {
+            Uri.fromFile(file)
+        }
     }
 }
