@@ -9,6 +9,7 @@ import me.wcy.androidweekly.converter.JobsConverter
 import me.wcy.androidweekly.converter.WeeklyDetailConverter
 import me.wcy.androidweekly.converter.WeeklyListConverter
 import me.wcy.androidweekly.model.Jobs
+import me.wcy.androidweekly.model.Version
 import me.wcy.androidweekly.model.Weekly
 import me.wcy.androidweekly.model.WeeklyDetail
 import okhttp3.MediaType
@@ -16,6 +17,7 @@ import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
@@ -48,6 +50,7 @@ class Api private constructor() {
         val retrofit = Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(ScalarsConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(okHttpClient)
                 .build()
@@ -124,6 +127,12 @@ class Api private constructor() {
                 .map {
                     return@map JobsConverter().convert(it)
                 }
+                .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    fun getVersion(): Single<Version> {
+        return api.getVersion()
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
     }
 }

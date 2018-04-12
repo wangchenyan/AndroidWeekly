@@ -1,4 +1,4 @@
-package me.wcy.androidweekly
+package me.wcy.androidweekly.application
 
 import android.app.Application
 import com.tencent.smtt.sdk.QbSdk

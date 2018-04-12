@@ -10,6 +10,7 @@ import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.activity_home_include.*
 import kotlinx.android.synthetic.main.include_app_bar.*
 import me.wcy.androidweekly.R
+import me.wcy.androidweekly.application.VersionManager
 import me.wcy.androidweekly.fragment.BaseNaviFragment
 import me.wcy.androidweekly.fragment.CollectionFragment
 import me.wcy.androidweekly.fragment.JobsFragment
@@ -32,6 +33,7 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         navigation_view.setNavigationItemSelectedListener(this)
         title = "Android 开发技术周报"
         setupViewPager()
+        VersionManager.get().checkVersion(this, true)
     }
 
     override fun shouldAddToolbar(): Boolean {

@@ -1,6 +1,7 @@
 package me.wcy.androidweekly.api
 
 import io.reactivex.Single
+import me.wcy.androidweekly.model.Version
 import okhttp3.RequestBody
 import retrofit2.http.*
 
@@ -23,4 +24,7 @@ interface IApi {
 
     @GET("cool-jobs/")
     fun getJobs(): Single<String>
+
+    @GET("https://raw.githubusercontent.com/wangchenyan/AndroidWeekly/master/version.json")
+    fun getVersion(): Single<Version>
 }

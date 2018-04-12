@@ -5,10 +5,9 @@ package me.wcy.androidweekly.constants
  */
 class Extras {
     companion object {
-        const val TITLE = "title"
         const val URL = "url"
         const val WEEKLY = "weekly"
-        const val LINK = "link"
         const val TYPE = "type"
+        const val PATH = "path"
     }
 }
